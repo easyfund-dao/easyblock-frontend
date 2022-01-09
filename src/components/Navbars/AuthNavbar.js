@@ -15,11 +15,11 @@ import {
   PersonIcon,
   RocketIcon,
 } from "components/Icons/Icons";
-import { SidebarResponsive } from "components/Sidebar/Sidebar";
 import PropTypes from "prop-types";
 import React from "react";
 import { NavLink } from "react-router-dom";
 import routes from "routes.js";
+
 export default function AuthNavbar(props) {
   const [open, setOpen] = React.useState(false);
   const handleDrawerToggle = () => {
@@ -171,18 +171,8 @@ export default function AuthNavbar(props) {
     >
       <Flex w="100%" justifyContent={{ sm: "start", lg: "space-between" }}>
         {brand}
-        <Box
-          ms={{ base: "auto", lg: "0px" }}
-          display={{ base: "flex", lg: "none" }}
-        >
-          <SidebarResponsive
-            logoText={props.logoText}
-            secondary={props.secondary}
-            routes={routes}
-            // logo={logo}
-            {...rest}
-          />
-        </Box>
+
+
         {linksAuth}
         <Link href="https://creative-tim.com/product/purity-ui-dashboard">
           <Button
