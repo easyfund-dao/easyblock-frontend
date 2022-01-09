@@ -135,6 +135,8 @@ export default function AdminNavbar(props) {
                     {
                         if(props.wallet == null) {
                             props.connectWalletHandler();
+                        } else {
+                            props.setCurrentAccount(null);
                         }
                     }}
                     paddingLeft={8}

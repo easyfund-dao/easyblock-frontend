@@ -37,41 +37,16 @@ import {ethers} from 'ethers';
 import {CONTRACT_ADDRESS, EASYBLOCK_ABI} from "../../contracts/EasyBlock";
 
 const provider = new ethers.providers.Web3Provider(window.ethereum);
+let signer = provider.getSigner();
 const easyBlockContract = new ethers.Contract(CONTRACT_ADDRESS, EASYBLOCK_ABI, provider);
+let easyBlockWithSigner = easyBlockContract.connect(signer);
 
 export default function Dashboard() {
     // WEB3 START
     const [currentAccount, setCurrentAccount] = useState(null);
 
-    const checkWalletIsConnected = async () => {
-        const {ethereum} = window;
-        if (!ethereum) {
-            console.log("Metamask doesn't exist");
-        } else {
-            console.log("Ready to go");
-        }
-
-        try {
-            const accounts = await ethereum.request({method: "eth_requestAccounts"});
-            setCurrentAccount(accounts[0]);
-        } catch (error) {
-            console.log(error);
-        }
-    };
-
     const connectWalletHandler = async () => {
-        const {ethereum} = window;
-
-        if (!ethereum) {
-            alert("Please install Metamask!");
-        }
-
-        try {
-            const accounts = await ethereum.request({method: "eth_requestAccounts"});
-            setCurrentAccount(accounts[0]);
-        } catch (error) {
-            console.log(error);
-        }
+        signer = provider.getSigner();
     };
 
     const mintNftHandler = () => {
@@ -120,12 +95,13 @@ export default function Dashboard() {
     const overlayRef = React.useRef();
 
     useEffect(async () => {
-        const signer = provider.getSigner();
         let totalInvestment = parseInt(await easyBlockContract.totalInvestmentsInUSD(), 10);
         let totalRewards = parseInt(await easyBlockContract.totalRewardsDistributedInUSD(), 10);
         let totalShares = parseInt(await easyBlockContract.totalShareCount(), 10);
         let purchaseTokenAddress = await easyBlockContract.purchaseTokens(0);
-        let sharePriceInUSD = await easyBlockContract.purchaseTokensPrice(purchaseTokenAddress);
+        let sharePriceInUSD = parseInt(await easyBlockContract.purchaseTokensPrice(purchaseTokenAddress), 10);
+        let userShares = parseInt(await easyBlockContract.shareCount(signer.getAddress()), 10);
+        let claimableReward = await easyBlockContract.claimableReward(signer.getAddress());
 
         setTotalInvestments(totalInvestment);
         setTotalRewardsPaid(totalRewards);
@@ -133,8 +109,13 @@ export default function Dashboard() {
         setPurchaseTokenContract(purchaseTokenAddress);
         setSharePrice(sharePriceInUSD);
 
-        checkWalletIsConnected();
-    }, [])
+        setUserShares(userShares);
+
+    }, [signer]);
+
+    async function claimRewards() {
+        await easyBlockWithSigner.claimRewards();
+    }
 
     return (
         <div style={{width: "100%", display: "flex", alignItems: "center", justifyContent: "center", paddingTop: 32}}>
@@ -142,6 +123,7 @@ export default function Dashboard() {
                 <AdminNavbar
                     wallet={currentAccount}
                     connectWalletHandler={() => connectWalletHandler()}
+                    setCurrentAccount={(newAccount) => setCurrentAccount(newAccount)}
                     logoText={"EasyBlock"}
                 />
             </Portal>
@@ -217,7 +199,7 @@ export default function Dashboard() {
                                         fontWeight="bold"
                                         pb=".1rem"
                                     >
-                                        Total Rewards
+                                        Total Rewards Distributed
                                     </StatLabel>
                                     <Flex>
                                         <StatNumber fontSize="lg" color={textColor}>
@@ -246,7 +228,7 @@ export default function Dashboard() {
                                     </StatLabel>
                                     <Flex>
                                         <StatNumber fontSize="lg" color={textColor} fontWeight="bold">
-                                            {(nodesOwned * 0.1 * strongPrice / totalShareCount).toFixed(4)} $
+                                            {totalShareCount === 0 ? 0 : (nodesOwned * 0.1 * strongPrice / totalShareCount).toFixed(4)} $
                                         </StatNumber>
                                     </Flex>
                                 </Stat>
@@ -273,7 +255,8 @@ export default function Dashboard() {
                                     width={{lg: "45%"}}
                                 >
                                     <Text fontSize="sm" color="gray.400" fontWeight="bold">
-                                        Connected Wallet: {currentAccount == null ? "Please Connect Wallet" : currentAccount}
+                                        Connected
+                                        Wallet: {currentAccount == null ? "Please Connect Wallet" : currentAccount}
                                     </Text>
                                     <Text
                                         fontSize="lg"
@@ -348,7 +331,9 @@ export default function Dashboard() {
                                         p="0px"
                                         variant="no-hover"
                                         my={{sm: "1.5rem", lg: "0px"}}
-                                        onClick={() => window.open("https://spookyswap.finance/swap?outputCurrency=0x04068da6c83afcfa0e13ba15a6696662335d5b75", '_blank')}
+                                        onClick={() => {
+                                            claimRewards();
+                                        }}
                                         paddingLeft={8}
                                         paddingRight={8}
                                     >
@@ -430,7 +415,9 @@ export default function Dashboard() {
                                         <Text style={{
                                             fontSize: 24,
                                             marginLeft: 32
-                                        }}><span style={{fontWeight: 'bold'}}>Total:</span> {(isNaN(parseInt(sharesToBeBought)) || parseInt(sharesToBeBought) < 1) ? sharePrice : sharePrice * sharesToBeBought}</Text>
+                                        }}><span
+                                            style={{fontWeight: 'bold'}}>Total:</span> {(isNaN(parseInt(sharesToBeBought)) || parseInt(sharesToBeBought) < 1) ? sharePrice : sharePrice * sharesToBeBought}
+                                        </Text>
                                         <Image
                                             src={'/coins/UsdcLogo.png'}
                                             alt="chakra image"
@@ -443,7 +430,9 @@ export default function Dashboard() {
                                         p="0px"
                                         variant="no-hover"
                                         my={{sm: "1.5rem", lg: "0px"}}
-                                        onClick={() => window.open("https://spookyswap.finance/swap?outputCurrency=0x04068da6c83afcfa0e13ba15a6696662335d5b75", '_blank')}
+                                        onClick={() => {
+                                            easyBlockWithSigner.buyShares(purchaseTokenContract, sharesToBeBought);
+                                        }}
                                         paddingLeft={8}
                                         paddingRight={8}
                                         paddingTop={6}
