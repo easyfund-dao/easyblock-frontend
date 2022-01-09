@@ -4,8 +4,8 @@ import {
     Button,
     Flex,
     Grid,
-    Icon,
-    Image,
+    Icon, IconButton,
+    Image, Input, InputGroup, InputLeftElement,
     Portal,
     Progress,
     SimpleGrid,
@@ -51,6 +51,7 @@ import {IoCheckmarkDoneCircleSharp} from "react-icons/io5";
 import {FiDollarSign} from "react-icons/fi"
 import {dashboardTableData, timelineData} from "variables/general";
 import {CreditIcon} from "../../components/Icons/Icons";
+import {SearchIcon} from "@chakra-ui/icons";
 
 export default function Dashboard() {
     const value = "$100.000";
@@ -66,10 +67,18 @@ export default function Dashboard() {
     const [totalShareCount, setTotalShareCount] = useState(60);
     const [strongPrice, setStrongPrice] = useState(500);
     const [nodesOwned, setNodesOwned] = useState(1);
+    const [sharePrice, setSharePrice] = useState(10);
 
     // User stats
     const [userShares, setUserShares] = useState(0);
     const [userPendingRewards, setUserPendingRewards] = useState(0);
+    const [walletAddress, setWalletAddress] = useState("Please Connect Wallet");
+
+    const [sharesToBeBought, setSharesToBeBought] = useState(1);
+
+    const inputBg = useColorModeValue("white", "gray.800");
+    const mainTeal = useColorModeValue("teal.300", "teal.300");
+    const searchIconColor = useColorModeValue("gray.700", "gray.200");
 
     const [series, setSeries] = useState([
         {
@@ -215,7 +224,7 @@ export default function Dashboard() {
                                     width={{lg: "45%"}}
                                 >
                                     <Text fontSize="sm" color="gray.400" fontWeight="bold">
-                                        Built by developers
+                                        Connected Wallet Address: {walletAddress}
                                     </Text>
                                     <Text
                                         fontSize="lg"
@@ -223,11 +232,11 @@ export default function Dashboard() {
                                         fontWeight="bold"
                                         pb=".5rem"
                                     >
-                                        EasyBlock
+                                        Shares Owned: {userShares}
                                     </Text>
                                     <Text fontSize="sm" color="gray.400" fontWeight="normal">
-                                        From colors, cards, typography to complex elements, you will
-                                        find the full documentation.
+                                        You can buy EasyBlock shares with USDC and start earning rewards from
+                                        StrongBlock nodes.
                                     </Text>
                                     <Spacer/>
                                     <Flex align="center">
@@ -236,6 +245,7 @@ export default function Dashboard() {
                                             variant="no-hover"
                                             bg="transparent"
                                             my={{sm: "1.5rem", lg: "0px"}}
+                                            onClick={() => window.open("https://spookyswap.finance/swap?outputCurrency=0x04068da6c83afcfa0e13ba15a6696662335d5b75", '_blank')}
                                         >
                                             <Text
                                                 fontSize="sm"
@@ -246,7 +256,7 @@ export default function Dashboard() {
                                                 my={{sm: "1.5rem", lg: "0px"}}
                                                 _hover={{me: "4px"}}
                                             >
-                                                Read more
+                                                Get USDC on SpookySwap
                                             </Text>
                                             <Icon
                                                 as={BsArrowRight}
@@ -264,18 +274,46 @@ export default function Dashboard() {
                                 </Flex>
                                 <Spacer/>
                                 <Flex
-                                    bg="teal.300"
+                                    bg="#FFFFFF"
                                     align="center"
                                     justify="center"
                                     borderRadius="15px"
-                                    width={{lg: "40%"}}
-                                    minHeight={{sm: "250px"}}
+                                    flexDirection={"column"}
+                                    padding={4}
                                 >
                                     <Image
-                                        src={logoChakra}
+                                        src={'/coins/UsdcLogo.png'}
                                         alt="chakra image"
-                                        minWidth={{md: "300px", lg: "auto"}}
+                                        width={100}
                                     />
+                                    <Text style={{
+                                        marginBottom: 16,
+                                        fontWeight: "bold",
+                                        fontSize: 24,
+                                        color: "#3e68a4",
+                                        marginTop: 8
+                                    }}>Pending Rewards: <span
+                                        style={{fontWeight: 'normal'}}>{userPendingRewards.toFixed(4)} $</span></Text>
+                                    <Button
+                                        bg={"#3e68a4"}
+                                        p="0px"
+                                        variant="no-hover"
+                                        my={{sm: "1.5rem", lg: "0px"}}
+                                        onClick={() => window.open("https://spookyswap.finance/swap?outputCurrency=0x04068da6c83afcfa0e13ba15a6696662335d5b75", '_blank')}
+                                        paddingLeft={8}
+                                        paddingRight={8}
+                                    >
+                                        <Text
+                                            fontSize="sm"
+                                            color={textColor}
+                                            fontWeight="bold"
+                                            cursor="pointer"
+                                            transition="all .5s ease"
+                                            my={{sm: "1.5rem", lg: "0px"}}
+                                        >
+                                            Claim Rewards
+                                        </Text>
+                                    </Button>
                                 </Flex>
                             </Flex>
                         </CardBody>
@@ -283,7 +321,6 @@ export default function Dashboard() {
                     <Card maxHeight="290.5px" p="1rem">
                         <CardBody
                             p="0px"
-                            backgroundImage={peopleImage}
                             bgPosition="center"
                             bgRepeat="no-repeat"
                             w="100%"
@@ -307,40 +344,74 @@ export default function Dashboard() {
                                     p="1.5rem 1.2rem 0.3rem 1.2rem"
                                     lineHeight="1.6"
                                 >
-                                    <Text fontSize="xl" fontWeight="bold" pb=".3rem">
-                                        Work with the rockets
+                                    <Text fontSize="24" fontWeight="bold" pb=".3rem" marginBottom={4}>
+                                        Buy EasyBlock Shares
                                     </Text>
-                                    <Text fontSize="sm" fontWeight="normal" w={{lg: "92%"}}>
-                                        Wealth creation is a revolutionary recent positive-sum game.
-                                        It is all about who takes the opportunity first.
-                                    </Text>
-                                    <Spacer/>
-                                    <Flex
-                                        align="center"
-                                        mt={{sm: "20px", lg: "40px", xl: "90px"}}
-                                    >
-                                        <Button p="0px" variant="no-hover" bg="transparent" mt="12px">
-                                            <Text
-                                                fontSize="sm"
-                                                fontWeight="bold"
-                                                _hover={{me: "4px"}}
-                                                transition="all .5s ease"
-                                            >
-                                                Read more
-                                            </Text>
-                                            <Icon
-                                                as={BsArrowRight}
-                                                w="20px"
-                                                h="20px"
-                                                fontSize="xl"
-                                                transition="all .5s ease"
-                                                mx=".3rem"
-                                                cursor="pointer"
-                                                _hover={{transform: "translateX(20%)"}}
-                                                pt="4px"
+                                    <div style={{
+                                        display: 'flex',
+                                        alignItems: 'flex-start',
+                                        justifyContent: 'flex-start',
+                                        marginBottom: 64
+                                    }}>
+                                        <Text fontSize="24" fontWeight="bold" marginRight={8}>
+                                            Share Count:
+                                        </Text>
+                                        <InputGroup
+                                            bg={inputBg}
+                                            borderRadius="15px"
+                                            w="100px"
+                                        >
+                                            <Input
+                                                fontSize="16"
+                                                py="11px"
+                                                placeholder="1"
+                                                borderRadius="inherit"
+                                                value={sharesToBeBought}
+                                                onChange={(e) => {
+                                                    setSharesToBeBought(e.target.value);
+                                                }}
+                                                onBlur={(e) => {
+                                                    if (e.target.value === "" || isNaN(parseInt(e.target.value)) || parseInt(e.target.value) < 1) {
+                                                        setSharesToBeBought(1);
+                                                    }
+                                                }}
+                                                textAlign={"center"}
                                             />
-                                        </Button>
-                                    </Flex>
+                                        </InputGroup>
+                                        <Text style={{
+                                            fontSize: 24,
+                                            marginLeft: 32
+                                        }}><span style={{fontWeight: 'bold'}}>Total:</span> {(isNaN(parseInt(sharesToBeBought)) || parseInt(sharesToBeBought) < 1) ? sharePrice : sharePrice * sharesToBeBought}</Text>
+                                        <Image
+                                            src={'/coins/UsdcLogo.png'}
+                                            alt="chakra image"
+                                            width={8}
+                                            style={{marginLeft: 8}}
+                                        />
+                                    </div>
+                                    <Button
+                                        bg={"#FFFFFF"}
+                                        p="0px"
+                                        variant="no-hover"
+                                        my={{sm: "1.5rem", lg: "0px"}}
+                                        onClick={() => window.open("https://spookyswap.finance/swap?outputCurrency=0x04068da6c83afcfa0e13ba15a6696662335d5b75", '_blank')}
+                                        paddingLeft={8}
+                                        paddingRight={8}
+                                        paddingTop={6}
+                                        paddingBottom={6}
+                                    >
+                                        <Text
+                                            fontSize="32"
+                                            color={"#3e68a4"}
+                                            fontWeight="bold"
+                                            cursor="pointer"
+                                            transition="all .5s ease"
+                                            my={{sm: "1.5rem", lg: "0px"}}
+                                        >
+                                            Buy Shares
+                                        </Text>
+                                    </Button>
+
                                 </Flex>
                             </Portal>
                         </CardBody>
