@@ -5,59 +5,39 @@ import {
     Button,
     Flex,
     Grid,
-    Icon, IconButton,
-    Image, Input, InputGroup, InputLeftElement,
+    Icon,
+    Image, Input, InputGroup,
     Portal,
-    Progress,
     SimpleGrid,
     Spacer,
     Stat,
     StatHelpText,
     StatLabel,
     StatNumber,
-    Table,
-    Tbody,
     Text,
-    Th,
-    Thead,
-    Tr,
     useColorMode,
     useColorModeValue,
 } from "@chakra-ui/react";
-// assets
-import peopleImage from "assets/img/people-image.png";
-import logoChakra from "assets/svg/logo-white.svg";
 // Custom components
 import Card from "components/Card/Card.js";
 import CardBody from "components/Card/CardBody.js";
-import CardHeader from "components/Card/CardHeader.js";
-import BarChart from "components/Charts/BarChart";
-import LineChart from "components/Charts/LineChart";
 import IconBox from "components/Icons/IconBox";
 // Custom icons
 import {
-    CartIcon,
-    DocumentIcon,
-    GlobeIcon,
-    RocketIcon,
-    StatsIcon,
     WalletIcon,
 } from "components/Icons/Icons.js";
-import DashboardTableRow from "components/Tables/DashboardTableRow";
-import TimelineRow from "components/Tables/TimelineRow";
 import React, {useState} from "react";
 // react icons
 import {BsArrowRight} from "react-icons/bs";
-import {IoCheckmarkDoneCircleSharp} from "react-icons/io5";
 import {FiDollarSign} from "react-icons/fi"
-import {dashboardTableData, timelineData} from "variables/general";
-import {CreditIcon} from "../../components/Icons/Icons";
-import {SearchIcon} from "@chakra-ui/icons";
 
 import AdminNavbar from "../../components/Navbars/AdminNavbar.js";
 
 import {ethers} from 'ethers';
 import {CONTRACT_ADDRESS, EASYBLOCK_ABI} from "../../contracts/EasyBlock";
+
+const provider = new ethers.providers.Web3Provider(window.ethereum);
+const easyBlockContract = new ethers.Contract(CONTRACT_ADDRESS, EASYBLOCK_ABI, provider);
 
 export default function Dashboard() {
     // WEB3 START
@@ -111,11 +91,7 @@ export default function Dashboard() {
                 Mint NFT
             </button>
         )
-    }
-
-    useEffect(() => {
-        checkWalletIsConnected();
-    }, [])
+    };
     // WEB3 END
     const value = "$100.000";
     // Chakra Color Mode
@@ -130,7 +106,8 @@ export default function Dashboard() {
     const [totalShareCount, setTotalShareCount] = useState(60);
     const [strongPrice, setStrongPrice] = useState(500);
     const [nodesOwned, setNodesOwned] = useState(1);
-    const [sharePrice, setSharePrice] = useState(10);
+    const [purchaseTokenContract, setPurchaseTokenContract] = useState("");
+    const [sharePrice, setSharePrice] = useState(0);
 
     // User stats
     const [userShares, setUserShares] = useState(0);
@@ -139,22 +116,25 @@ export default function Dashboard() {
     const [sharesToBeBought, setSharesToBeBought] = useState(1);
 
     const inputBg = useColorModeValue("white", "gray.800");
-    const mainTeal = useColorModeValue("teal.300", "teal.300");
-    const searchIconColor = useColorModeValue("gray.700", "gray.200");
 
-    const [series, setSeries] = useState([
-        {
-            type: "area",
-            name: "Mobile apps",
-            data: [190, 220, 205, 350, 370, 450, 400, 360, 210, 250, 292, 150],
-        },
-        {
-            type: "area",
-            name: "Websites",
-            data: [400, 291, 121, 117, 25, 133, 121, 211, 147, 25, 201, 203],
-        },
-    ]);
     const overlayRef = React.useRef();
+
+    useEffect(async () => {
+        const signer = provider.getSigner();
+        let totalInvestment = parseInt(await easyBlockContract.totalInvestmentsInUSD(), 10);
+        let totalRewards = parseInt(await easyBlockContract.totalRewardsDistributedInUSD(), 10);
+        let totalShares = parseInt(await easyBlockContract.totalShareCount(), 10);
+        let purchaseTokenAddress = await easyBlockContract.purchaseTokens(0);
+        let sharePriceInUSD = await easyBlockContract.purchaseTokensPrice(purchaseTokenAddress);
+
+        setTotalInvestments(totalInvestment);
+        setTotalRewardsPaid(totalRewards);
+        setTotalShareCount(totalShares);
+        setPurchaseTokenContract(purchaseTokenAddress);
+        setSharePrice(sharePriceInUSD);
+
+        checkWalletIsConnected();
+    }, [])
 
     return (
         <div style={{width: "100%", display: "flex", alignItems: "center", justifyContent: "center", paddingTop: 32}}>
@@ -193,7 +173,7 @@ export default function Dashboard() {
                                             ps="3px"
                                             fontSize="md"
                                         >
-                                            {"(3778%)"}
+                                            {" /3778%"}
                                         </StatHelpText>
                                     </Flex>
                                 </Stat>
