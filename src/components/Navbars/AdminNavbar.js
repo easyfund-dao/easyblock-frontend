@@ -2,7 +2,7 @@
 import {
     Flex,
     StatLabel, Text, Stat,
-    useColorModeValue,
+    useColorModeValue, Button,
 } from "@chakra-ui/react";
 import PropTypes from "prop-types";
 import React, {useState} from "react";
@@ -18,7 +18,6 @@ export default function AdminNavbar(props) {
         onOpen,
         ...rest
     } = props;
-
     // Here are all the props that may change depending on navbar's type or state.(secondary, variant, scrolled)
     let mainText = useColorModeValue("gray.700", "gray.200");
     let secondaryText = useColorModeValue("gray.400", "gray.200");
@@ -115,7 +114,6 @@ export default function AdminNavbar(props) {
                         md: "row",
                     }}
                     alignItems={{xl: "center"}}
-                    maxWidth={"1400"}
                     paddingLeft="16"
                     paddingRight="16"
                 >
@@ -127,6 +125,34 @@ export default function AdminNavbar(props) {
                                    pb=".1rem">EasyBlock</StatLabel>
                     </Stat>
                 </Flex>
+
+                <Button
+                    bg={"#FFFFFF"}
+                    p="0px"
+                    variant="no-hover"
+                    my={{sm: "1.5rem", lg: "0px"}}
+                    onClick={() =>
+                    {
+                        if(props.wallet == null) {
+                            props.connectWalletHandler();
+                        }
+                    }}
+                    paddingLeft={8}
+                    paddingRight={8}
+                    paddingTop={4}
+                    paddingBottom={4}
+                >
+                    <Text
+                        fontSize="24"
+                        color={"#3e68a4"}
+                        fontWeight="bold"
+                        cursor="pointer"
+                        transition="all .5s ease"
+                        my={{sm: "1.5rem", lg: "0px"}}
+                    >
+                        {props.wallet == null ? "Connect" : "Disconnect"}
+                    </Text>
+                </Button>
             </Flex>
         </div>
     );

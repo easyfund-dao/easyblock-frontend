@@ -1,3 +1,4 @@
+import {useEffect} from 'react'
 // Chakra imports
 import {
     Box,
@@ -53,7 +54,69 @@ import {dashboardTableData, timelineData} from "variables/general";
 import {CreditIcon} from "../../components/Icons/Icons";
 import {SearchIcon} from "@chakra-ui/icons";
 
+import AdminNavbar from "../../components/Navbars/AdminNavbar.js";
+
+import {ethers} from 'ethers';
+import {CONTRACT_ADDRESS, EASYBLOCK_ABI} from "../../contracts/EasyBlock";
+
 export default function Dashboard() {
+    // WEB3 START
+    const [currentAccount, setCurrentAccount] = useState(null);
+
+    const checkWalletIsConnected = async () => {
+        const {ethereum} = window;
+        if (!ethereum) {
+            console.log("Metamask doesn't exist");
+        } else {
+            console.log("Ready to go");
+        }
+
+        try {
+            const accounts = await ethereum.request({method: "eth_requestAccounts"});
+            setCurrentAccount(accounts[0]);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    const connectWalletHandler = async () => {
+        const {ethereum} = window;
+
+        if (!ethereum) {
+            alert("Please install Metamask!");
+        }
+
+        try {
+            const accounts = await ethereum.request({method: "eth_requestAccounts"});
+            setCurrentAccount(accounts[0]);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    const mintNftHandler = () => {
+    }
+
+    const connectWalletButton = () => {
+        return (
+            <button onClick={connectWalletHandler} className='cta-button connect-wallet-button'>
+                Connect Wallet
+            </button>
+        )
+    }
+
+    const mintNftButton = () => {
+        return (
+            <button onClick={mintNftHandler} className='cta-button mint-nft-button'>
+                Mint NFT
+            </button>
+        )
+    }
+
+    useEffect(() => {
+        checkWalletIsConnected();
+    }, [])
+    // WEB3 END
     const value = "$100.000";
     // Chakra Color Mode
     const {colorMode, toggleColorMode} = useColorMode();
@@ -72,7 +135,6 @@ export default function Dashboard() {
     // User stats
     const [userShares, setUserShares] = useState(0);
     const [userPendingRewards, setUserPendingRewards] = useState(0);
-    const [walletAddress, setWalletAddress] = useState("Please Connect Wallet");
 
     const [sharesToBeBought, setSharesToBeBought] = useState(1);
 
@@ -96,6 +158,13 @@ export default function Dashboard() {
 
     return (
         <div style={{width: "100%", display: "flex", alignItems: "center", justifyContent: "center", paddingTop: 32}}>
+            <Portal>
+                <AdminNavbar
+                    wallet={currentAccount}
+                    connectWalletHandler={() => connectWalletHandler()}
+                    logoText={"EasyBlock"}
+                />
+            </Portal>
             <Flex flexDirection="column" pt={{base: "120px", md: "75px"}} maxWidth={"1400px"} paddingLeft={0}
                   paddingRight={0}>
                 <SimpleGrid columns={{sm: 1, md: 2, xl: 4}} spacing="24px" paddingLeft={0} paddingRight={0}>
@@ -224,7 +293,7 @@ export default function Dashboard() {
                                     width={{lg: "45%"}}
                                 >
                                     <Text fontSize="sm" color="gray.400" fontWeight="bold">
-                                        Connected Wallet Address: {walletAddress}
+                                        Connected Wallet: {currentAccount == null ? "Please Connect Wallet" : currentAccount}
                                     </Text>
                                     <Text
                                         fontSize="lg"
