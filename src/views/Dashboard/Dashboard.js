@@ -48,7 +48,9 @@ import React, {useState} from "react";
 // react icons
 import {BsArrowRight} from "react-icons/bs";
 import {IoCheckmarkDoneCircleSharp} from "react-icons/io5";
+import {FiDollarSign} from "react-icons/fi"
 import {dashboardTableData, timelineData} from "variables/general";
+import {CreditIcon} from "../../components/Icons/Icons";
 
 export default function Dashboard() {
     const value = "$100.000";
@@ -57,6 +59,18 @@ export default function Dashboard() {
     const iconTeal = useColorModeValue("teal.300", "teal.300");
     const iconBoxInside = useColorModeValue("white", "white");
     const textColor = useColorModeValue("gray.700", "white");
+
+    // General stats
+    const [totalInvestments, setTotalInvestments] = useState(0);
+    const [totalRewardsPaid, setTotalRewardsPaid] = useState(0);
+    const [totalShareCount, setTotalShareCount] = useState(60);
+    const [strongPrice, setStrongPrice] = useState(500);
+    const [nodesOwned, setNodesOwned] = useState(1);
+
+    // User stats
+    const [userShares, setUserShares] = useState(0);
+    const [userPendingRewards, setUserPendingRewards] = useState(0);
+
     const [series, setSeries] = useState([
         {
             type: "area",
@@ -72,9 +86,10 @@ export default function Dashboard() {
     const overlayRef = React.useRef();
 
     return (
-        <div style={{width: "100%", display: "flex", alignItems: "center", justifyContent: "center"}}>
-            <Flex flexDirection="column" pt={{base: "120px", md: "75px"}} maxWidth={"1400px"}>
-                <SimpleGrid columns={{sm: 1, md: 2, xl: 4}} spacing="24px">
+        <div style={{width: "100%", display: "flex", alignItems: "center", justifyContent: "center", paddingTop: 32}}>
+            <Flex flexDirection="column" pt={{base: "120px", md: "75px"}} maxWidth={"1400px"} paddingLeft={0}
+                  paddingRight={0}>
+                <SimpleGrid columns={{sm: 1, md: 2, xl: 4}} spacing="24px" paddingLeft={0} paddingRight={0}>
                     <Card minH="83px">
                         <CardBody>
                             <Flex flexDirection="row" align="center" justify="center" w="100%">
@@ -85,11 +100,11 @@ export default function Dashboard() {
                                         fontWeight="bold"
                                         pb=".1rem"
                                     >
-                                        Today's Money
+                                        StrongBlock APR/APY
                                     </StatLabel>
                                     <Flex>
                                         <StatNumber fontSize="lg" color={textColor}>
-                                            $53,000
+                                            365%
                                         </StatNumber>
                                         <StatHelpText
                                             alignSelf="flex-end"
@@ -100,12 +115,12 @@ export default function Dashboard() {
                                             ps="3px"
                                             fontSize="md"
                                         >
-                                            +55%
+                                            {"(3778%)"}
                                         </StatHelpText>
                                     </Flex>
                                 </Stat>
-                                <IconBox as="box" h={"45px"} w={"45px"} bg={iconTeal}>
-                                    <WalletIcon h={"24px"} w={"24px"} color={iconBoxInside}/>
+                                <IconBox as="box" h={"48px"} w={"48px"} bg={"#FFFFFF"}>
+                                    <img style={{width: 36, height: 36}} src={'/stronblock/StrongBlockLogo.png'}/>
                                 </IconBox>
                             </Flex>
                         </CardBody>
@@ -120,27 +135,16 @@ export default function Dashboard() {
                                         fontWeight="bold"
                                         pb=".1rem"
                                     >
-                                        Today's Users
+                                        Total Investment
                                     </StatLabel>
                                     <Flex>
                                         <StatNumber fontSize="lg" color={textColor}>
-                                            2,300
+                                            {totalInvestments} $
                                         </StatNumber>
-                                        <StatHelpText
-                                            alignSelf="flex-end"
-                                            justifySelf="flex-end"
-                                            m="0px"
-                                            color="green.400"
-                                            fontWeight="bold"
-                                            ps="3px"
-                                            fontSize="md"
-                                        >
-                                            +5%
-                                        </StatHelpText>
                                     </Flex>
                                 </Stat>
-                                <IconBox as="box" h={"45px"} w={"45px"} bg={iconTeal}>
-                                    <GlobeIcon h={"24px"} w={"24px"} color={iconBoxInside}/>
+                                <IconBox as="box" h={"48px"} w={"48px"} bg={"#FFFFFF"}>
+                                    <WalletIcon h={"36px"} w={"36px"} color={"#3e68a4"}/>
                                 </IconBox>
                             </Flex>
                         </CardBody>
@@ -155,28 +159,17 @@ export default function Dashboard() {
                                         fontWeight="bold"
                                         pb=".1rem"
                                     >
-                                        New Clients
+                                        Total Rewards
                                     </StatLabel>
                                     <Flex>
                                         <StatNumber fontSize="lg" color={textColor}>
-                                            +3,020
+                                            {totalRewardsPaid} $
                                         </StatNumber>
-                                        <StatHelpText
-                                            alignSelf="flex-end"
-                                            justifySelf="flex-end"
-                                            m="0px"
-                                            color="red.500"
-                                            fontWeight="bold"
-                                            ps="3px"
-                                            fontSize="md"
-                                        >
-                                            -14%
-                                        </StatHelpText>
                                     </Flex>
                                 </Stat>
                                 <Spacer/>
-                                <IconBox as="box" h={"45px"} w={"45px"} bg={iconTeal}>
-                                    <DocumentIcon h={"24px"} w={"24px"} color={iconBoxInside}/>
+                                <IconBox as="box" h={"48px"} w={"48px"} bg={"#FFFFFF"}>
+                                    <FiDollarSign h={"48px"} w={"48px"} color={"#3e68a4"}/>
                                 </IconBox>
                             </Flex>
                         </CardBody>
@@ -191,27 +184,16 @@ export default function Dashboard() {
                                         fontWeight="bold"
                                         pb=".1rem"
                                     >
-                                        Total Sales
+                                        Daily Reward / Share
                                     </StatLabel>
                                     <Flex>
                                         <StatNumber fontSize="lg" color={textColor} fontWeight="bold">
-                                            $173,000
+                                            {(nodesOwned * 0.1 * strongPrice / totalShareCount).toFixed(4)} $
                                         </StatNumber>
-                                        <StatHelpText
-                                            alignSelf="flex-end"
-                                            justifySelf="flex-end"
-                                            m="0px"
-                                            color="green.400"
-                                            fontWeight="bold"
-                                            ps="3px"
-                                            fontSize="md"
-                                        >
-                                            +8%
-                                        </StatHelpText>
                                     </Flex>
                                 </Stat>
-                                <IconBox as="box" h={"45px"} w={"45px"} bg={iconTeal}>
-                                    <CartIcon h={"24px"} w={"24px"} color={iconBoxInside}/>
+                                <IconBox as="box" h={"48px"} w={"48px"} bg={"#FFFFFF"}>
+                                    <FiDollarSign h={"48px"} w={"48px"} color={"#3e68a4"}/>
                                 </IconBox>
                             </Flex>
                         </CardBody>
@@ -361,281 +343,6 @@ export default function Dashboard() {
                                     </Flex>
                                 </Flex>
                             </Portal>
-                        </CardBody>
-                    </Card>
-                </Grid>
-                <Grid
-                    templateColumns={{sm: "1fr", lg: "1.3fr 1.7fr"}}
-                    templateRows={{sm: "repeat(2, 1fr)", lg: "1fr"}}
-                    gap="24px"
-                    mb={{lg: "26px"}}
-                >
-                    <Card p="16px">
-                        <CardBody>
-                            <Flex direction="column" w="100%">
-                                <BarChart/>
-                                <Flex
-                                    direction="column"
-                                    mt="24px"
-                                    mb="36px"
-                                    alignSelf="flex-start"
-                                >
-                                    <Text
-                                        fontSize="lg"
-                                        color={textColor}
-                                        fontWeight="bold"
-                                        mb="6px"
-                                    >
-                                        Active Users
-                                    </Text>
-                                    <Text fontSize="md" fontWeight="medium" color="gray.400">
-                                        <Text as="span" color="green.400" fontWeight="bold">
-                                            (+23%)
-                                        </Text>{" "}
-                                        than last week
-                                    </Text>
-                                </Flex>
-                                <SimpleGrid gap={{sm: "12px"}} columns={4}>
-                                    <Flex direction="column">
-                                        <Flex alignItems="center">
-                                            <IconBox
-                                                as="box"
-                                                h={"30px"}
-                                                w={"30px"}
-                                                bg={iconTeal}
-                                                me="6px"
-                                            >
-                                                <WalletIcon h={"15px"} w={"15px"} color={iconBoxInside}/>
-                                            </IconBox>
-                                            <Text fontSize="sm" color="gray.400" fontWeight="semibold">
-                                                Users
-                                            </Text>
-                                        </Flex>
-                                        <Text
-                                            fontSize="lg"
-                                            color={textColor}
-                                            fontWeight="bold"
-                                            mb="6px"
-                                            my="6px"
-                                        >
-                                            32,984
-                                        </Text>
-                                        <Progress
-                                            colorScheme="teal"
-                                            borderRadius="12px"
-                                            h="5px"
-                                            value={20}
-                                        />
-                                    </Flex>
-                                    <Flex direction="column">
-                                        <Flex alignItems="center">
-                                            <IconBox
-                                                as="box"
-                                                h={"30px"}
-                                                w={"30px"}
-                                                bg={iconTeal}
-                                                me="6px"
-                                            >
-                                                <RocketIcon h={"15px"} w={"15px"} color={iconBoxInside}/>
-                                            </IconBox>
-                                            <Text fontSize="sm" color="gray.400" fontWeight="semibold">
-                                                Clicks
-                                            </Text>
-                                        </Flex>
-                                        <Text
-                                            fontSize="lg"
-                                            color={textColor}
-                                            fontWeight="bold"
-                                            mb="6px"
-                                            my="6px"
-                                        >
-                                            2.42m
-                                        </Text>
-                                        <Progress
-                                            colorScheme="teal"
-                                            borderRadius="12px"
-                                            h="5px"
-                                            value={90}
-                                        />
-                                    </Flex>
-                                    <Flex direction="column">
-                                        <Flex alignItems="center">
-                                            <IconBox
-                                                as="box"
-                                                h={"30px"}
-                                                w={"30px"}
-                                                bg={iconTeal}
-                                                me="6px"
-                                            >
-                                                <CartIcon h={"15px"} w={"15px"} color={iconBoxInside}/>
-                                            </IconBox>
-                                            <Text fontSize="sm" color="gray.400" fontWeight="semibold">
-                                                Sales
-                                            </Text>
-                                        </Flex>
-                                        <Text
-                                            fontSize="lg"
-                                            color={textColor}
-                                            fontWeight="bold"
-                                            mb="6px"
-                                            my="6px"
-                                        >
-                                            2,400$
-                                        </Text>
-                                        <Progress
-                                            colorScheme="teal"
-                                            borderRadius="12px"
-                                            h="5px"
-                                            value={30}
-                                        />
-                                    </Flex>
-                                    <Flex direction="column">
-                                        <Flex alignItems="center">
-                                            <IconBox
-                                                as="box"
-                                                h={"30px"}
-                                                w={"30px"}
-                                                bg={iconTeal}
-                                                me="6px"
-                                            >
-                                                <StatsIcon h={"15px"} w={"15px"} color={iconBoxInside}/>
-                                            </IconBox>
-                                            <Text fontSize="sm" color="gray.400" fontWeight="semibold">
-                                                Items
-                                            </Text>
-                                        </Flex>
-                                        <Text
-                                            fontSize="lg"
-                                            color={textColor}
-                                            fontWeight="bold"
-                                            mb="6px"
-                                            my="6px"
-                                        >
-                                            320
-                                        </Text>
-                                        <Progress
-                                            colorScheme="teal"
-                                            borderRadius="12px"
-                                            h="5px"
-                                            value={50}
-                                        />
-                                    </Flex>
-                                </SimpleGrid>
-                            </Flex>
-                        </CardBody>
-                    </Card>
-                    <Card p="28px 10px 16px 0px" mb={{sm: "26px", lg: "0px"}}>
-                        <CardHeader mb="20px" pl="22px">
-                            <Flex direction="column" alignSelf="flex-start">
-                                <Text fontSize="lg" color={textColor} fontWeight="bold" mb="6px">
-                                    Sales Overview
-                                </Text>
-                                <Text fontSize="md" fontWeight="medium" color="gray.400">
-                                    <Text as="span" color="green.400" fontWeight="bold">
-                                        (+5%) more
-                                    </Text>{" "}
-                                    in 2021
-                                </Text>
-                            </Flex>
-                        </CardHeader>
-                        <Box w="100%" h={{sm: "300px"}} ps="8px">
-                            <LineChart/>
-                        </Box>
-                    </Card>
-                </Grid>
-                <Grid
-                    templateColumns={{sm: "1fr", md: "1fr 1fr", lg: "2fr 1fr"}}
-                    templateRows={{sm: "1fr auto", md: "1fr", lg: "1fr"}}
-                    gap="24px"
-                >
-                    <Card p="16px" overflowX={{sm: "scroll", xl: "hidden"}}>
-                        <CardHeader p="12px 0px 28px 0px">
-                            <Flex direction="column">
-                                <Text
-                                    fontSize="lg"
-                                    color={textColor}
-                                    fontWeight="bold"
-                                    pb=".5rem"
-                                >
-                                    Projects
-                                </Text>
-                                <Flex align="center">
-                                    <Icon
-                                        as={IoCheckmarkDoneCircleSharp}
-                                        color="teal.300"
-                                        w={4}
-                                        h={4}
-                                        pe="3px"
-                                    />
-                                    <Text fontSize="sm" color="gray.400" fontWeight="normal">
-                                        <Text fontWeight="bold" as="span">
-                                            30 done
-                                        </Text>{" "}
-                                        this month.
-                                    </Text>
-                                </Flex>
-                            </Flex>
-                        </CardHeader>
-                        <Table variant="simple" color={textColor}>
-                            <Thead>
-                                <Tr my=".8rem" ps="0px">
-                                    <Th ps="0px" color="gray.400">
-                                        Companies
-                                    </Th>
-                                    <Th color="gray.400">Members</Th>
-                                    <Th color="gray.400">Budget</Th>
-                                    <Th color="gray.400">Completion</Th>
-                                </Tr>
-                            </Thead>
-                            <Tbody>
-                                {dashboardTableData.map((row) => {
-                                    return (
-                                        <DashboardTableRow
-                                            name={row.name}
-                                            logo={row.logo}
-                                            members={row.members}
-                                            budget={row.budget}
-                                            progression={row.progression}
-                                        />
-                                    );
-                                })}
-                            </Tbody>
-                        </Table>
-                    </Card>
-                    <Card maxH="100%">
-                        <CardHeader p="22px 0px 35px 14px">
-                            <Flex direction="column">
-                                <Text
-                                    fontSize="lg"
-                                    color={textColor}
-                                    fontWeight="bold"
-                                    pb=".5rem"
-                                >
-                                    Orders overview
-                                </Text>
-                                <Text fontSize="sm" color="gray.400" fontWeight="normal">
-                                    <Text fontWeight="bold" as="span" color="teal.300">
-                                        +30%
-                                    </Text>{" "}
-                                    this month.
-                                </Text>
-                            </Flex>
-                        </CardHeader>
-                        <CardBody ps="20px" pe="0px" mb="31px" position="relative">
-                            <Flex direction="column">
-                                {timelineData.map((row, index, arr) => {
-                                    return (
-                                        <TimelineRow
-                                            logo={row.logo}
-                                            title={row.title}
-                                            date={row.date}
-                                            color={row.color}
-                                            index={index}
-                                            arrLength={arr.length}
-                                        />
-                                    );
-                                })}
-                            </Flex>
                         </CardBody>
                     </Card>
                 </Grid>
