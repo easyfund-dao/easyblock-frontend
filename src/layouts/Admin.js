@@ -96,18 +96,11 @@ export default function Dashboard(props) {
   // Chakra Color Mode
   return (
     <ChakraProvider theme={theme} resetCss={false}>
-      <Sidebar
-        routes={routes}
-        logoText={"EasyBlock"}
-        display="none"
-        sidebarVariant={sidebarVariant}
-        {...rest}
-      />
       <MainPanel
         ref={mainPanel}
         w={{
           base: "100%",
-          xl: "calc(100% - 275px)",
+          xl: "100%",
         }}
       >
         <Portal>
