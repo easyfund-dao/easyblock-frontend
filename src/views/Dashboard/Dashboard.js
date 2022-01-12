@@ -244,7 +244,7 @@ export default function Dashboard() {
                                         fontWeight="bold"
                                         pb=".1rem"
                                     >
-                                        StrongBlock APR/APY
+                                        StrongBlock APR
                                     </StatLabel>
                                     <Flex>
                                         <StatNumber fontSize="lg" color={textColor}>
@@ -259,7 +259,7 @@ export default function Dashboard() {
                                             ps="3px"
                                             fontSize="md"
                                         >
-                                            {" /3778%"}
+                                            {"APY: 3778%"}
                                         </StatHelpText>
                                     </Flex>
                                 </Stat>
