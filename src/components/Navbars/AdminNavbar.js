@@ -131,12 +131,12 @@ export default function AdminNavbar(props) {
                     p="0px"
                     variant="no-hover"
                     my={{sm: "1.5rem", lg: "0px"}}
-                    onClick={() =>
-                    {
-                        if(props.wallet == null) {
+                    onClick={() => {
+                        if (props.signer == null) {
                             props.connectWalletHandler();
                         } else {
-                            props.setCurrentAccount(null);
+                            console.log("should disconnect");
+                            props.setSigner(null);
                         }
                     }}
                     paddingLeft={8}
@@ -152,7 +152,7 @@ export default function AdminNavbar(props) {
                         transition="all .5s ease"
                         my={{sm: "1.5rem", lg: "0px"}}
                     >
-                        {props.wallet == null ? "Connect" : "Disconnect"}
+                        {props.signer == null ? "Connect" : "Disconnect"}
                     </Text>
                 </Button>
             </Flex>

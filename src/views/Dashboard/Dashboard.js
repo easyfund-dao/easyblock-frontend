@@ -38,33 +38,27 @@ import {ethers} from 'ethers';
 import {CONTRACT_ADDRESS, EASYBLOCK_ABI} from "../../contracts/EasyBlock";
 
 const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
-let signer = provider.getSigner();
 const easyBlockContract = new ethers.Contract(CONTRACT_ADDRESS, EASYBLOCK_ABI, provider);
-let easyBlockWithSigner = easyBlockContract.connect(signer);
+let signer = null;
+let easyBlockWithSigner = null;
 
 export default function Dashboard() {
     // WEB3 START
-    const [currentAccount, setCurrentAccount] = useState(null);
-
     const connectWalletHandler = async () => {
+        console.log("hey");
         let chainId = await provider.getNetwork();
         chainId = chainId['chainId'];
-        console.log(chainId);
 
         if (chainId !== 250) {
             if (window.confirm("Please switch to Fantom Network to use EasyBlock.")) {
                 await changeNetworkToFTM();
             }
         } else {
-            signer = provider.getSigner();
+            await connectAndGetUserData();
         }
     };
 
-    const mintNftHandler = () => {
-    };
-
     // WEB3 END
-    const value = "$100.000";
     // Chakra Color Mode
     const {colorMode, toggleColorMode} = useColorMode();
     const iconTeal = useColorModeValue("teal.300", "teal.300");
@@ -117,6 +111,23 @@ export default function Dashboard() {
         }
     }
 
+    async function connectAndGetUserData() {
+        try {
+            // Info about signer
+            signer = provider.getSigner();
+            if (signer != null) {
+                easyBlockWithSigner = easyBlockContract.connect(signer);
+                let userShares = parseInt(await easyBlockContract.shareCount(signer.getAddress()), 10);
+                let claimableReward = parseInt(await easyBlockContract.claimableReward(signer.getAddress()), 10);
+
+                // setUserShares(userShares);
+                // setUserPendingRewards(claimableReward / 1000000);
+            }
+        } catch (e) {
+            console.log(e);
+        }
+    }
+
     async function getSmartContractData() {
         // Data from contract
         try {
@@ -125,18 +136,16 @@ export default function Dashboard() {
             let totalShares = parseInt(await easyBlockContract.totalShareCount(), 10);
             let purchaseTokenAddress = await easyBlockContract.purchaseTokens(0);
             let sharePriceInUSD = parseInt(await easyBlockContract.purchaseTokensPrice(purchaseTokenAddress), 10);
-            let userShares = parseInt(await easyBlockContract.shareCount(signer.getAddress()), 10);
             // let totalNodesOwned = parseInt(await easyBlockContract.nodeCount(), 10);
-            let claimableReward = parseInt(await easyBlockContract.claimableReward(signer.getAddress()), 10);
 
             setTotalInvestments(totalInvestment);
             setTotalRewardsPaid(totalRewards);
             setTotalShareCount(totalShares);
             setPurchaseTokenContract(purchaseTokenAddress);
             setSharePrice(sharePriceInUSD);
-            setUserShares(userShares);
             // setNodesOwned(totalNodesOwned);
-            setUserPendingRewards(claimableReward / 1000000);
+
+            await connectAndGetUserData()
         } catch (e) {
             const chainId = await provider.getNetwork();
             if (chainId !== 250) {
@@ -161,13 +170,21 @@ export default function Dashboard() {
 
     // CONTRACT INTERACTION FUNCTIONS
     async function claimRewards() {
-        setIsClaiming(true);
-        await easyBlockWithSigner.claimRewards();
+        if (signer != null) {
+            setIsClaiming(true);
+            await easyBlockWithSigner.claimRewards();
+        } else {
+            await connectWalletHandler();
+        }
     }
 
     async function buyShares(count) {
-        setIsBuying(true);
-        await easyBlockWithSigner.buyShares(purchaseTokenContract, count);
+        if (signer != null) {
+            setIsBuying(true);
+            await easyBlockWithSigner.buyShares(purchaseTokenContract, count);
+        } else {
+            await connectWalletHandler();
+        }
     }
 
     // CONTRACT EVENT LISTENERS
@@ -195,9 +212,9 @@ export default function Dashboard() {
         <div style={{width: "100%", display: "flex", alignItems: "center", justifyContent: "center", paddingTop: 32}}>
             <Portal>
                 <AdminNavbar
-                    wallet={currentAccount}
+                    signer={signer}
                     connectWalletHandler={() => connectWalletHandler()}
-                    setCurrentAccount={(newAccount) => setCurrentAccount(newAccount)}
+                    setSigner={(newSigner) => signer = newSigner}
                     logoText={"EasyBlock"}
                 />
             </Portal>
@@ -330,7 +347,7 @@ export default function Dashboard() {
                                 >
                                     <Text fontSize="sm" color="gray.400" fontWeight="bold">
                                         Connected
-                                        Wallet: {currentAccount == null ? "Please Connect Wallet" : currentAccount}
+                                        Wallet: {signer == null ? "Please Connect Wallet" : signer.getAddress()}
                                     </Text>
                                     <Text
                                         fontSize="lg"
@@ -429,7 +446,7 @@ export default function Dashboard() {
                                         display: 'flex',
                                         alignItems: 'flex-start',
                                         justifyContent: 'flex-start',
-                                        marginBottom: 64
+                                        marginBottom: 32
                                     }}>
                                         <Text fontSize="24" fontWeight="bold" marginRight={8}>
                                             Share Count:
