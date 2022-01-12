@@ -345,38 +345,7 @@ export default function Dashboard() {
                                         StrongBlock nodes.
                                     </Text>
                                     <Spacer/>
-                                    <Flex align="center">
-                                        <Button
-                                            p="0px"
-                                            variant="no-hover"
-                                            bg="transparent"
-                                            my={{sm: "1.5rem", lg: "0px"}}
-                                            onClick={() => window.open("https://spookyswap.finance/swap?outputCurrency=0x04068da6c83afcfa0e13ba15a6696662335d5b75", '_blank')}
-                                        >
-                                            <Text
-                                                fontSize="sm"
-                                                color={textColor}
-                                                fontWeight="bold"
-                                                cursor="pointer"
-                                                transition="all .5s ease"
-                                                my={{sm: "1.5rem", lg: "0px"}}
-                                                _hover={{me: "4px"}}
-                                            >
-                                                Get USDC on SpookySwap
-                                            </Text>
-                                            <Icon
-                                                as={BsArrowRight}
-                                                w="20px"
-                                                h="20px"
-                                                fontSize="2xl"
-                                                transition="all .5s ease"
-                                                mx=".3rem"
-                                                cursor="pointer"
-                                                pt="4px"
-                                                _hover={{transform: "translateX(20%)"}}
-                                            />
-                                        </Button>
-                                    </Flex>
+
                                 </Flex>
                                 <Spacer/>
                                 <Flex
@@ -500,6 +469,38 @@ export default function Dashboard() {
                                             style={{marginLeft: 8}}
                                         />
                                     </div>
+                                    <Flex align="center">
+                                        <Button
+                                            p="0px"
+                                            variant="no-hover"
+                                            bg="transparent"
+                                            my={{sm: "1.5rem", lg: "0px"}}
+                                            onClick={() => window.open("https://spookyswap.finance/swap?outputCurrency=0x04068da6c83afcfa0e13ba15a6696662335d5b75", '_blank')}
+                                        >
+                                            <Text
+                                                fontSize="sm"
+                                                color={textColor}
+                                                fontWeight="bold"
+                                                cursor="pointer"
+                                                transition="all .5s ease"
+                                                my={{sm: "1.5rem", lg: "0px"}}
+                                                _hover={{me: "4px"}}
+                                            >
+                                                Get USDC on SpookySwap
+                                            </Text>
+                                            <Icon
+                                                as={BsArrowRight}
+                                                w="20px"
+                                                h="20px"
+                                                fontSize="2xl"
+                                                transition="all .5s ease"
+                                                mx=".3rem"
+                                                cursor="pointer"
+                                                pt="4px"
+                                                _hover={{transform: "translateX(20%)"}}
+                                            />
+                                        </Button>
+                                    </Flex>
                                     <Button
                                         bg={"#FFFFFF"}
                                         p="0px"
