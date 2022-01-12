@@ -37,7 +37,7 @@ import AdminNavbar from "../../components/Navbars/AdminNavbar.js";
 import {ethers} from 'ethers';
 import {CONTRACT_ADDRESS, EASYBLOCK_ABI} from "../../contracts/EasyBlock";
 
-const provider = new ethers.providers.Web3Provider(window.ethereum);
+const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
 let signer = provider.getSigner();
 const easyBlockContract = new ethers.Contract(CONTRACT_ADDRESS, EASYBLOCK_ABI, provider);
 let easyBlockWithSigner = easyBlockContract.connect(signer);
@@ -47,27 +47,22 @@ export default function Dashboard() {
     const [currentAccount, setCurrentAccount] = useState(null);
 
     const connectWalletHandler = async () => {
-        signer = provider.getSigner();
+        let chainId = await provider.getNetwork();
+        chainId = chainId['chainId'];
+        console.log(chainId);
+
+        if (chainId !== 250) {
+            if (window.confirm("Please switch to Fantom Network to use EasyBlock.")) {
+                await changeNetworkToFTM();
+            }
+        } else {
+            signer = provider.getSigner();
+        }
     };
 
     const mintNftHandler = () => {
-    }
-
-    const connectWalletButton = () => {
-        return (
-            <button onClick={connectWalletHandler} className='cta-button connect-wallet-button'>
-                Connect Wallet
-            </button>
-        )
-    }
-
-    const mintNftButton = () => {
-        return (
-            <button onClick={mintNftHandler} className='cta-button mint-nft-button'>
-                Mint NFT
-            </button>
-        )
     };
+
     // WEB3 END
     const value = "$100.000";
     // Chakra Color Mode
@@ -100,6 +95,28 @@ export default function Dashboard() {
     const [isBuying, setIsBuying] = useState(false);
 
     // Web3 methods
+    async function changeNetworkToFTM() {
+        try {
+            if (!window.ethereum) throw new Error("No crypto wallet found");
+            await window.ethereum.request({
+                method: "wallet_addEthereumChain",
+                params: [{
+                    chainId: `0x${Number(250).toString(16)}`,
+                    chainName: "Fantom",
+                    nativeCurrency: {
+                        name: "Fantom",
+                        symbol: "FTM",
+                        decimals: 18
+                    },
+                    rpcUrls: ["https://rpc.ftm.tools/"],
+                    blockExplorerUrls: ["https://ftmscan.com/"]
+                }]
+            });
+        } catch (e) {
+            alert(e.message);
+        }
+    }
+
     async function getSmartContractData() {
         // Data from contract
         try {
@@ -121,7 +138,12 @@ export default function Dashboard() {
             // setNodesOwned(totalNodesOwned);
             setUserPendingRewards(claimableReward / 1000000);
         } catch (e) {
-
+            const chainId = await provider.getNetwork();
+            if (chainId !== 250) {
+                if (window.confirm("Please switch to Fantom Network to use EasyBlock.")) {
+                    await changeNetworkToFTM();
+                }
+            }
         }
     }
 
@@ -163,6 +185,11 @@ export default function Dashboard() {
         }
     });
 
+    provider.on("network", (newNetwork, oldNetwork) => {
+        if (oldNetwork) {
+            window.location.reload();
+        }
+    });
 
     return (
         <div style={{width: "100%", display: "flex", alignItems: "center", justifyContent: "center", paddingTop: 32}}>
