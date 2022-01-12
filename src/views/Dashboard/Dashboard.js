@@ -17,6 +17,7 @@ import {
     Text,
     useColorMode,
     useColorModeValue,
+    Spinner
 } from "@chakra-ui/react";
 // Custom components
 import Card from "components/Card/Card.js";
@@ -79,8 +80,8 @@ export default function Dashboard() {
     const [totalInvestments, setTotalInvestments] = useState(0);
     const [totalRewardsPaid, setTotalRewardsPaid] = useState(0);
     const [totalShareCount, setTotalShareCount] = useState(60);
-    const [strongPrice, setStrongPrice] = useState(500);
-    const [nodesOwned, setNodesOwned] = useState(1);
+    const [strongPrice, setStrongPrice] = useState(0);
+    const [nodesOwned, setNodesOwned] = useState(0);
     const [purchaseTokenContract, setPurchaseTokenContract] = useState("");
     const [sharePrice, setSharePrice] = useState(0);
 
@@ -88,11 +89,15 @@ export default function Dashboard() {
     const [userShares, setUserShares] = useState(0);
     const [userPendingRewards, setUserPendingRewards] = useState(0);
 
-    const [sharesToBeBought, setSharesToBeBought] = useState(1);
+    const [sharesToBeBought, setSharesToBeBought] = useState(10);
 
     const inputBg = useColorModeValue("white", "gray.800");
 
     const overlayRef = React.useRef();
+
+    // UI CONTROLLERS
+    const [isClaiming, setIsClaiming] = useState(false);
+    const [isBuying, setIsBuying] = useState(false);
 
     useEffect(async () => {
         let totalInvestment = parseInt(await easyBlockContract.totalInvestmentsInUSD(), 10);
@@ -101,21 +106,41 @@ export default function Dashboard() {
         let purchaseTokenAddress = await easyBlockContract.purchaseTokens(0);
         let sharePriceInUSD = parseInt(await easyBlockContract.purchaseTokensPrice(purchaseTokenAddress), 10);
         let userShares = parseInt(await easyBlockContract.shareCount(signer.getAddress()), 10);
-        let claimableReward = await easyBlockContract.claimableReward(signer.getAddress());
+        // let totalNodesOwned = parseInt(await easyBlockContract.nodeCount(), 10);
+        let claimableReward = parseInt(await easyBlockContract.claimableReward(signer.getAddress()), 10);
+
+        console.log(claimableReward);
 
         setTotalInvestments(totalInvestment);
         setTotalRewardsPaid(totalRewards);
         setTotalShareCount(totalShares);
         setPurchaseTokenContract(purchaseTokenAddress);
         setSharePrice(sharePriceInUSD);
-
         setUserShares(userShares);
+        // setNodesOwned(totalNodesOwned);
+        setUserPendingRewards(claimableReward / 1000000);
+
+        // Strong price from coin gecko
+        fetch('https://api.coingecko.com/api/v3/coins/strong').then(response => response.json()).then(data => {
+                let price = data.market_data.current_price.usd;
+                setStrongPrice(price);
+            }
+        )
 
     }, [signer]);
 
+    // CONTRACT INTERACTION FUNCTIONS
     async function claimRewards() {
+        setIsClaiming(true);
         await easyBlockWithSigner.claimRewards();
     }
+
+    async function buyShares(count) {
+        setIsBuying(true);
+        await easyBlockWithSigner.buyShares(purchaseTokenContract, count);
+    }
+
+    // CONTRACT EVENT LISTENERS
 
     return (
         <div style={{width: "100%", display: "flex", alignItems: "center", justifyContent: "center", paddingTop: 32}}>
@@ -199,7 +224,7 @@ export default function Dashboard() {
                                         fontWeight="bold"
                                         pb=".1rem"
                                     >
-                                        Total Rewards Distributed
+                                        Total Revenue Distributed
                                     </StatLabel>
                                     <Flex>
                                         <StatNumber fontSize="lg" color={textColor}>
@@ -224,11 +249,11 @@ export default function Dashboard() {
                                         fontWeight="bold"
                                         pb=".1rem"
                                     >
-                                        Daily Reward / Share
+                                        Monthly Revenue <br/>/ 100 Shares
                                     </StatLabel>
                                     <Flex>
                                         <StatNumber fontSize="lg" color={textColor} fontWeight="bold">
-                                            {totalShareCount === 0 ? 0 : (nodesOwned * 0.1 * strongPrice / totalShareCount).toFixed(4)} $
+                                            {totalShareCount === 0 ? 0 : (nodesOwned * 0.1 * strongPrice / totalShareCount * 100 * 30).toFixed(4)} $
                                         </StatNumber>
                                     </Flex>
                                 </Stat>
@@ -337,16 +362,17 @@ export default function Dashboard() {
                                         paddingLeft={8}
                                         paddingRight={8}
                                     >
-                                        <Text
-                                            fontSize="sm"
-                                            color={textColor}
-                                            fontWeight="bold"
-                                            cursor="pointer"
-                                            transition="all .5s ease"
-                                            my={{sm: "1.5rem", lg: "0px"}}
-                                        >
-                                            Claim Rewards
-                                        </Text>
+                                        {!isClaiming ?
+                                            <Text
+                                                fontSize="sm"
+                                                color={textColor}
+                                                fontWeight="bold"
+                                                cursor="pointer"
+                                                transition="all .5s ease"
+                                                my={{sm: "1.5rem", lg: "0px"}}
+                                            >
+                                                Claim Rewards
+                                            </Text> : <Spinner/>}
                                     </Button>
                                 </Flex>
                             </Flex>
@@ -431,23 +457,24 @@ export default function Dashboard() {
                                         variant="no-hover"
                                         my={{sm: "1.5rem", lg: "0px"}}
                                         onClick={() => {
-                                            easyBlockWithSigner.buyShares(purchaseTokenContract, sharesToBeBought);
+                                            buyShares(sharesToBeBought);
                                         }}
                                         paddingLeft={8}
                                         paddingRight={8}
                                         paddingTop={6}
                                         paddingBottom={6}
                                     >
-                                        <Text
-                                            fontSize="32"
-                                            color={"#3e68a4"}
-                                            fontWeight="bold"
-                                            cursor="pointer"
-                                            transition="all .5s ease"
-                                            my={{sm: "1.5rem", lg: "0px"}}
-                                        >
-                                            Buy Shares
-                                        </Text>
+                                        {!isBuying ?
+                                            <Text
+                                                fontSize="32"
+                                                color={"#3e68a4"}
+                                                fontWeight="bold"
+                                                cursor="pointer"
+                                                transition="all .5s ease"
+                                                my={{sm: "1.5rem", lg: "0px"}}
+                                            >
+                                                Buy Shares
+                                            </Text> : <Spinner color={"#3e68a4"}/>}
                                     </Button>
 
                                 </Flex>
