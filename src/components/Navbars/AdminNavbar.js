@@ -2,10 +2,11 @@
 import {
     Flex,
     StatLabel, Text, Stat,
-    useColorModeValue, Button,
+    useColorModeValue, Button, Icon,
 } from "@chakra-ui/react";
 import PropTypes from "prop-types";
 import React, {useState} from "react";
+import {BsArrowRight} from "react-icons/bs";
 
 export default function AdminNavbar(props) {
     const [scrolled, setScrolled] = useState(false);
@@ -155,7 +156,36 @@ export default function AdminNavbar(props) {
                         >
                             {props.isConnected == null ? "Connect" : "Disconnect"}
                         </Text>
-                    </Button> : null}
+                    </Button> : <Button
+                        p="0px"
+                        variant="no-hover"
+                        bg="transparent"
+                        my={{sm: "1.5rem", lg: "0px"}}
+                        onClick={() => window.open("https://spookyswap.finance/bridge", '_blank')}
+                    >
+                        <Text
+                            fontSize="sm"
+                            color={"#FFFFFF"}
+                            fontWeight="bold"
+                            cursor="pointer"
+                            transition="all .5s ease"
+                            my={{sm: "1.5rem", lg: "0px"}}
+                            _hover={{me: "4px"}}
+                        >
+                            Bridge Assets to Fantom Network
+                        </Text>
+                        <Icon
+                            as={BsArrowRight}
+                            w="20px"
+                            h="20px"
+                            fontSize="2xl"
+                            transition="all .5s ease"
+                            mx=".3rem"
+                            cursor="pointer"
+                            pt="4px"
+                            _hover={{transform: "translateX(20%)"}}
+                        />
+                    </Button>}
             </Flex>
         </div>
     );

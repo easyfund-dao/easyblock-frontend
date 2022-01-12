@@ -128,7 +128,7 @@ export default function Dashboard() {
                 let totalUserRewards = parseInt(await easyBlockContract.totalUserRewards(walletAddress), 10);
 
                 setUserShares(userShares);
-                setTotalUserRewards(totalUserRewards / 1000000);
+                setTotalUserRewards((totalUserRewards - claimableReward) / 1000000);
                 setUserPendingRewards(claimableReward / 1000000);
                 setIsConnected(true);
             }
@@ -228,7 +228,7 @@ export default function Dashboard() {
                         console.log(signer);
                     }}
                     logoText={"EasyBlock"}
-                    isConnected = {isConnected}
+                    isConnected={isConnected}
                 />
             </Portal>
             <Flex flexDirection="column" pt={{base: "120px", md: "75px"}} maxWidth={"1400px"} paddingLeft={0}
@@ -307,7 +307,7 @@ export default function Dashboard() {
                                     </StatLabel>
                                     <Flex>
                                         <StatNumber fontSize="lg" color={textColor}>
-                                            {totalRewardsPaid} $
+                                            {totalRewardsPaid.toFixed(4)} $
                                         </StatNumber>
                                     </Flex>
                                 </Stat>
@@ -376,7 +376,7 @@ export default function Dashboard() {
                                         fontWeight="bold"
                                         pb=".5rem"
                                     >
-                                        All Time Earnings: {totalUserRewards} $
+                                        All Time Earnings: {totalUserRewards.toFixed(4)} $
                                     </Text>
                                     <Text fontSize="sm" color="gray.400" fontWeight="normal">
                                         You can buy EasyBlock shares with USDC and start earning rewards from
