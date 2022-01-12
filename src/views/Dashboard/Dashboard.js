@@ -99,26 +99,34 @@ export default function Dashboard() {
     const [isClaiming, setIsClaiming] = useState(false);
     const [isBuying, setIsBuying] = useState(false);
 
+    // Web3 methods
+    async function getSmartContractData() {
+        // Data from contract
+        try {
+            let totalInvestment = parseInt(await easyBlockContract.totalInvestmentsInUSD(), 10);
+            let totalRewards = parseInt(await easyBlockContract.totalRewardsDistributedInUSD(), 10);
+            let totalShares = parseInt(await easyBlockContract.totalShareCount(), 10);
+            let purchaseTokenAddress = await easyBlockContract.purchaseTokens(0);
+            let sharePriceInUSD = parseInt(await easyBlockContract.purchaseTokensPrice(purchaseTokenAddress), 10);
+            let userShares = parseInt(await easyBlockContract.shareCount(signer.getAddress()), 10);
+            // let totalNodesOwned = parseInt(await easyBlockContract.nodeCount(), 10);
+            let claimableReward = parseInt(await easyBlockContract.claimableReward(signer.getAddress()), 10);
+
+            setTotalInvestments(totalInvestment);
+            setTotalRewardsPaid(totalRewards);
+            setTotalShareCount(totalShares);
+            setPurchaseTokenContract(purchaseTokenAddress);
+            setSharePrice(sharePriceInUSD);
+            setUserShares(userShares);
+            // setNodesOwned(totalNodesOwned);
+            setUserPendingRewards(claimableReward / 1000000);
+        } catch (e) {
+
+        }
+    }
+
     useEffect(async () => {
-        let totalInvestment = parseInt(await easyBlockContract.totalInvestmentsInUSD(), 10);
-        let totalRewards = parseInt(await easyBlockContract.totalRewardsDistributedInUSD(), 10);
-        let totalShares = parseInt(await easyBlockContract.totalShareCount(), 10);
-        let purchaseTokenAddress = await easyBlockContract.purchaseTokens(0);
-        let sharePriceInUSD = parseInt(await easyBlockContract.purchaseTokensPrice(purchaseTokenAddress), 10);
-        let userShares = parseInt(await easyBlockContract.shareCount(signer.getAddress()), 10);
-        // let totalNodesOwned = parseInt(await easyBlockContract.nodeCount(), 10);
-        let claimableReward = parseInt(await easyBlockContract.claimableReward(signer.getAddress()), 10);
-
-        console.log(claimableReward);
-
-        setTotalInvestments(totalInvestment);
-        setTotalRewardsPaid(totalRewards);
-        setTotalShareCount(totalShares);
-        setPurchaseTokenContract(purchaseTokenAddress);
-        setSharePrice(sharePriceInUSD);
-        setUserShares(userShares);
-        // setNodesOwned(totalNodesOwned);
-        setUserPendingRewards(claimableReward / 1000000);
+        await getSmartContractData();
 
         // Strong price from coin gecko
         fetch('https://api.coingecko.com/api/v3/coins/strong').then(response => response.json()).then(data => {
@@ -141,6 +149,20 @@ export default function Dashboard() {
     }
 
     // CONTRACT EVENT LISTENERS
+    easyBlockContract.on("RewardCollected", async (amount, address, event) => {
+        if (event.event === "RewardCollected" && address === await signer.getAddress()) {
+            setUserPendingRewards(0);
+            setIsClaiming(false);
+        }
+    });
+    easyBlockContract.on("Investment", async (shareCount, price, address, event) => {
+        if (event.event === "Investment" && address === await signer.getAddress()) {
+            getSmartContractData();
+            setIsBuying(false);
+            setSharesToBeBought(0);
+        }
+    });
+
 
     return (
         <div style={{width: "100%", display: "flex", alignItems: "center", justifyContent: "center", paddingTop: 32}}>
@@ -224,7 +246,7 @@ export default function Dashboard() {
                                         fontWeight="bold"
                                         pb=".1rem"
                                     >
-                                        Total Revenue Distributed
+                                        Total Revenue Generated
                                     </StatLabel>
                                     <Flex>
                                         <StatNumber fontSize="lg" color={textColor}>
