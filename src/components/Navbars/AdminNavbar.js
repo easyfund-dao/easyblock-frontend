@@ -137,9 +137,6 @@ export default function AdminNavbar(props) {
                         onClick={() => {
                             if (props.signer == null) {
                                 props.connectWalletHandler();
-                            } else {
-                                // console.log("should disconnect");
-                                // props.setSigner(null);
                             }
                         }}
                         paddingLeft={8}
@@ -155,7 +152,7 @@ export default function AdminNavbar(props) {
                             transition="all .5s ease"
                             my={{sm: "1.5rem", lg: "0px"}}
                         >
-                            {props.isConnected == null ? "Connect" : "Disconnect"}
+                            {!props.isConnected ? "Connect" : "Disconnect"}
                         </Text>
                     </Button> : window.innerWidth >= 960 ? <Button
                         p="0px"

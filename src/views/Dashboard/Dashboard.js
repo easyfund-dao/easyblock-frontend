@@ -45,7 +45,6 @@ let easyBlockWithSigner = null;
 export default function Dashboard() {
     // WEB3 START
     const connectWalletHandler = async () => {
-        console.log("hey");
         let chainId = await provider.getNetwork();
         chainId = chainId['chainId'];
 
@@ -55,6 +54,7 @@ export default function Dashboard() {
             }
         } else {
             await connectAndGetUserData();
+            window.location.reload();
         }
     };
 
@@ -167,7 +167,7 @@ export default function Dashboard() {
         if (colorMode === "light") {
             toggleColorMode();
         }
-        
+
         await getSmartContractData();
 
         // Strong price from coin gecko
