@@ -143,14 +143,15 @@ export default function Dashboard() {
             let totalShares = parseInt(await easyBlockContract.totalShareCount(), 10);
             let purchaseTokenAddress = await easyBlockContract.purchaseTokens(0);
             let sharePriceInUSD = parseInt(await easyBlockContract.purchaseTokensPrice(purchaseTokenAddress), 10);
-            // let totalNodesOwned = parseInt(await easyBlockContract.nodeCount(), 10);
+            console.log(4);
+            let totalNodesOwned = parseInt(await easyBlockContract.nodeCount(), 10);
 
             setTotalInvestments(totalInvestment);
             setTotalRewardsPaid(totalRewards);
             setTotalShareCount(totalShares);
             setPurchaseTokenContract(purchaseTokenAddress);
             setSharePrice(sharePriceInUSD);
-            // setNodesOwned(totalNodesOwned);
+            setNodesOwned(totalNodesOwned);
 
             await connectAndGetUserData()
         } catch (e) {
@@ -389,7 +390,7 @@ export default function Dashboard() {
                                     </StatLabel>
                                     <Flex>
                                         <StatNumber fontSize="lg" color={textColor} fontWeight="bold">
-                                            {totalShareCount === 0 ? 0 : (nodesOwned * 0.1 * strongPrice / totalShareCount * 100 * 30).toFixed(4)} $
+                                            {totalShareCount === 0 ? 0 : (nodesOwned * 3 * strongPrice / totalShareCount * 100).toFixed(4)} $
                                         </StatNumber>
                                     </Flex>
                                 </Stat>
