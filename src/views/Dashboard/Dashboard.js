@@ -164,6 +164,10 @@ export default function Dashboard() {
     }
 
     useEffect(async () => {
+        if (colorMode === "light") {
+            toggleColorMode();
+        }
+        
         await getSmartContractData();
 
         // Strong price from coin gecko
