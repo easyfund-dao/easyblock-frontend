@@ -126,7 +126,7 @@ export default function AdminNavbar(props) {
                     </Stat>
                 </Flex>
 
-                {props.signer == null ?
+                {!props.isConnected ?
                     <Button
                         bg={"#FFFFFF"}
                         p="0px"
@@ -153,7 +153,7 @@ export default function AdminNavbar(props) {
                             transition="all .5s ease"
                             my={{sm: "1.5rem", lg: "0px"}}
                         >
-                            {props.signer == null ? "Connect" : "Disconnect"}
+                            {props.isConnected == null ? "Connect" : "Disconnect"}
                         </Text>
                     </Button> : null}
             </Flex>

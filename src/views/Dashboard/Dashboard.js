@@ -89,6 +89,7 @@ export default function Dashboard() {
     // UI CONTROLLERS
     const [isClaiming, setIsClaiming] = useState(false);
     const [isBuying, setIsBuying] = useState(false);
+    const [isConnected, setIsConnected] = useState(false);
 
     // Web3 methods
     async function changeNetworkToFTM() {
@@ -129,6 +130,7 @@ export default function Dashboard() {
                 setUserShares(userShares);
                 setTotalUserRewards(totalUserRewards / 1000000);
                 setUserPendingRewards(claimableReward / 1000000);
+                setIsConnected(true);
             }
         } catch (e) {
             console.log(e);
@@ -226,6 +228,7 @@ export default function Dashboard() {
                         console.log(signer);
                     }}
                     logoText={"EasyBlock"}
+                    isConnected = {isConnected}
                 />
             </Portal>
             <Flex flexDirection="column" pt={{base: "120px", md: "75px"}} maxWidth={"1400px"} paddingLeft={0}
