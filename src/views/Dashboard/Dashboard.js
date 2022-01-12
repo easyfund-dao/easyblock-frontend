@@ -61,8 +61,6 @@ export default function Dashboard() {
     // WEB3 END
     // Chakra Color Mode
     const {colorMode, toggleColorMode} = useColorMode();
-    const iconTeal = useColorModeValue("teal.300", "teal.300");
-    const iconBoxInside = useColorModeValue("white", "white");
     const textColor = useColorModeValue("gray.700", "white");
 
     // General stats
@@ -434,13 +432,13 @@ export default function Dashboard() {
                             </Flex>
                         </CardBody>
                     </Card>
-                    <Card maxHeight="290.5px" p="1rem">
+                    <Card maxHeight="400px" p="1rem">
                         <CardBody
                             p="0px"
                             bgPosition="center"
                             bgRepeat="no-repeat"
                             w="100%"
-                            h={{sm: "200px", lg: "100%"}}
+                            h={{sm: "200px", lg: "350px"}}
                             bgSize="cover"
                             position="relative"
                             borderRadius="15px"
@@ -463,6 +461,12 @@ export default function Dashboard() {
                                     <Text fontSize="24" fontWeight="bold" pb=".3rem" marginBottom={4}>
                                         Buy EasyBlock Shares
                                     </Text>
+                                    {nodesOwned < 1 ?
+                                        <Text fontSize="16" fontWeight="bold" pb=".3rem" marginBottom={4}
+                                              color={"green.400"}>
+                                            ! 50% discount only untill the protocol purchases its first StrongBlock Node
+                                            !
+                                        </Text> : null}
                                     <div style={{
                                         display: 'flex',
                                         alignItems: 'flex-start',
