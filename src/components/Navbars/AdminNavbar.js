@@ -126,35 +126,36 @@ export default function AdminNavbar(props) {
                     </Stat>
                 </Flex>
 
-                <Button
-                    bg={"#FFFFFF"}
-                    p="0px"
-                    variant="no-hover"
-                    my={{sm: "1.5rem", lg: "0px"}}
-                    onClick={() => {
-                        if (props.signer == null) {
-                            props.connectWalletHandler();
-                        } else {
-                            console.log("should disconnect");
-                            props.setSigner(null);
-                        }
-                    }}
-                    paddingLeft={8}
-                    paddingRight={8}
-                    paddingTop={4}
-                    paddingBottom={4}
-                >
-                    <Text
-                        fontSize="24"
-                        color={"#3e68a4"}
-                        fontWeight="bold"
-                        cursor="pointer"
-                        transition="all .5s ease"
+                {props.signer == null ?
+                    <Button
+                        bg={"#FFFFFF"}
+                        p="0px"
+                        variant="no-hover"
                         my={{sm: "1.5rem", lg: "0px"}}
+                        onClick={() => {
+                            if (props.signer == null) {
+                                props.connectWalletHandler();
+                            } else {
+                                // console.log("should disconnect");
+                                // props.setSigner(null);
+                            }
+                        }}
+                        paddingLeft={8}
+                        paddingRight={8}
+                        paddingTop={4}
+                        paddingBottom={4}
                     >
-                        {props.signer == null ? "Connect" : "Disconnect"}
-                    </Text>
-                </Button>
+                        <Text
+                            fontSize="24"
+                            color={"#3e68a4"}
+                            fontWeight="bold"
+                            cursor="pointer"
+                            transition="all .5s ease"
+                            my={{sm: "1.5rem", lg: "0px"}}
+                        >
+                            {props.signer == null ? "Connect" : "Disconnect"}
+                        </Text>
+                    </Button> : null}
             </Flex>
         </div>
     );

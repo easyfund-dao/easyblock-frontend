@@ -75,6 +75,7 @@ export default function Dashboard() {
     const [sharePrice, setSharePrice] = useState(0);
 
     // User stats
+    const [userWallet, setUserWallet] = useState("");
     const [userShares, setUserShares] = useState(0);
     const [userPendingRewards, setUserPendingRewards] = useState(0);
 
@@ -116,12 +117,14 @@ export default function Dashboard() {
             // Info about signer
             signer = provider.getSigner();
             if (signer != null) {
+                let walletAddress = await signer.getAddress();
+                setUserWallet(walletAddress);
                 easyBlockWithSigner = easyBlockContract.connect(signer);
-                let userShares = parseInt(await easyBlockContract.shareCount(signer.getAddress()), 10);
-                let claimableReward = parseInt(await easyBlockContract.claimableReward(signer.getAddress()), 10);
+                let userShares = parseInt(await easyBlockContract.shareCount(walletAddress), 10);
+                let claimableReward = parseInt(await easyBlockContract.claimableReward(walletAddress), 10);
 
-                // setUserShares(userShares);
-                // setUserPendingRewards(claimableReward / 1000000);
+                setUserShares(userShares);
+                setUserPendingRewards(claimableReward / 1000000);
             }
         } catch (e) {
             console.log(e);
@@ -214,7 +217,10 @@ export default function Dashboard() {
                 <AdminNavbar
                     signer={signer}
                     connectWalletHandler={() => connectWalletHandler()}
-                    setSigner={(newSigner) => signer = newSigner}
+                    setSigner={(newSigner) => {
+                        signer = newSigner;
+                        console.log(signer);
+                    }}
                     logoText={"EasyBlock"}
                 />
             </Portal>
@@ -347,7 +353,7 @@ export default function Dashboard() {
                                 >
                                     <Text fontSize="sm" color="gray.400" fontWeight="bold">
                                         Connected
-                                        Wallet: {signer == null ? "Please Connect Wallet" : signer.getAddress()}
+                                        Wallet: {signer == null ? "Please Connect Wallet" : userWallet}
                                     </Text>
                                     <Text
                                         fontSize="lg"
