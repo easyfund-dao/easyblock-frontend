@@ -78,6 +78,7 @@ export default function Dashboard() {
     const [userWallet, setUserWallet] = useState("");
     const [userShares, setUserShares] = useState(0);
     const [userPendingRewards, setUserPendingRewards] = useState(0);
+    const [totalUserRewards, setTotalUserRewards] = useState(0);
 
     const [sharesToBeBought, setSharesToBeBought] = useState(10);
 
@@ -120,10 +121,13 @@ export default function Dashboard() {
                 let walletAddress = await signer.getAddress();
                 setUserWallet(walletAddress);
                 easyBlockWithSigner = easyBlockContract.connect(signer);
+
                 let userShares = parseInt(await easyBlockContract.shareCount(walletAddress), 10);
                 let claimableReward = parseInt(await easyBlockContract.claimableReward(walletAddress), 10);
+                let totalUserRewards = parseInt(await easyBlockContract.totalUserRewards(walletAddress), 10);
 
                 setUserShares(userShares);
+                setTotalUserRewards(totalUserRewards / 1000000);
                 setUserPendingRewards(claimableReward / 1000000);
             }
         } catch (e) {
@@ -356,12 +360,20 @@ export default function Dashboard() {
                                         Wallet: {signer == null ? "Please Connect Wallet" : userWallet}
                                     </Text>
                                     <Text
-                                        fontSize="lg"
+                                        fontSize="xl"
                                         color={textColor}
                                         fontWeight="bold"
                                         pb=".5rem"
                                     >
                                         Shares Owned: {userShares}
+                                    </Text>
+                                    <Text
+                                        fontSize="md"
+                                        color={textColor}
+                                        fontWeight="bold"
+                                        pb=".5rem"
+                                    >
+                                        All Time Earnings: {totalUserRewards} $
                                     </Text>
                                     <Text fontSize="sm" color="gray.400" fontWeight="normal">
                                         You can buy EasyBlock shares with USDC and start earning rewards from
