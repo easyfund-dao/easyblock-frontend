@@ -115,16 +115,17 @@ export default function AdminNavbar(props) {
                         md: "row",
                     }}
                     alignItems={{xl: "center"}}
-                    paddingLeft="16"
+                    paddingLeft={window.innerWidth >= 960 ? "16" : "0"}
                     paddingRight="16"
                 >
                     <img src={'/favicon.png'} style={{width: 64, height: 64}}/>
-                    <Stat me={"auto"} paddingLeft={"8"}>
-                        <StatLabel fontSize="48"
-                                   color="#FFFFFF"
-                                   fontWeight="bold"
-                                   pb=".1rem">EasyBlock</StatLabel>
-                    </Stat>
+                    {window.innerWidth >= 960 ?
+                        <Stat me={"auto"} paddingLeft={"8"}>
+                            <StatLabel fontSize="48"
+                                       color="#FFFFFF"
+                                       fontWeight="bold"
+                                       pb=".1rem">EasyBlock</StatLabel>
+                        </Stat> : null}
                 </Flex>
 
                 {!props.isConnected ?
@@ -156,7 +157,7 @@ export default function AdminNavbar(props) {
                         >
                             {props.isConnected == null ? "Connect" : "Disconnect"}
                         </Text>
-                    </Button> : <Button
+                    </Button> : window.innerWidth >= 960 ? <Button
                         p="0px"
                         variant="no-hover"
                         bg="transparent"
@@ -185,7 +186,7 @@ export default function AdminNavbar(props) {
                             pt="4px"
                             _hover={{transform: "translateX(20%)"}}
                         />
-                    </Button>}
+                    </Button> : null}
             </Flex>
         </div>
     );

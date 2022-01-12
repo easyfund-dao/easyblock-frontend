@@ -229,7 +229,7 @@ export default function Dashboard() {
                     isConnected={isConnected}
                 />
             </Portal>
-            <Flex flexDirection="column" pt={{base: "120px", md: "75px"}} maxWidth={"1400px"} paddingLeft={0}
+            <Flex flexDirection="column" pt={{base: "60px", md: "75px"}} maxWidth={"1400px"} paddingLeft={0}
                   paddingRight={0}>
                 <Flex
                     bg="#FFFFFF"
@@ -487,13 +487,13 @@ export default function Dashboard() {
                             </Flex>
                         </CardBody>
                     </Card>
-                    <Card maxHeight="400px" p="1rem">
+                    <Card maxHeight="600px" p="1rem">
                         <CardBody
                             p="0px"
                             bgPosition="center"
                             bgRepeat="no-repeat"
                             w="100%"
-                            h={{sm: "200px", lg: "350px"}}
+                            h={{sm: "500px", lg: "350px"}}
                             bgSize="cover"
                             position="relative"
                             borderRadius="15px"
@@ -526,7 +526,8 @@ export default function Dashboard() {
                                         display: 'flex',
                                         alignItems: 'flex-start',
                                         justifyContent: 'flex-start',
-                                        marginBottom: 32
+                                        marginBottom: 32,
+                                        flexDirection: window.innerWidth >= 960 ? "row" : "column"
                                     }}>
                                         <Text fontSize="24" fontWeight="bold" marginRight={8}>
                                             Share Count:
@@ -553,25 +554,41 @@ export default function Dashboard() {
                                                 textAlign={"center"}
                                             />
                                         </InputGroup>
-                                        <Text style={{
-                                            fontSize: 24,
-                                            marginLeft: 32
-                                        }}><span
-                                            style={{fontWeight: 'bold'}}>Total:</span> {(isNaN(parseInt(sharesToBeBought)) || parseInt(sharesToBeBought) < 1) ? sharePrice : sharePrice * sharesToBeBought}
-                                        </Text>
-                                        <Image
-                                            src={'/coins/UsdcLogo.png'}
-                                            alt="chakra image"
-                                            width={8}
-                                            style={{marginLeft: 8}}
-                                        />
+                                        {window.innerWidth >= 960 ?
+                                            <>
+                                                <Text style={{
+                                                    fontSize: 24,
+                                                    marginLeft: 32
+                                                }}><span
+                                                    style={{fontWeight: 'bold'}}>Total:</span> {(isNaN(parseInt(sharesToBeBought)) || parseInt(sharesToBeBought) < 1) ? sharePrice : sharePrice * sharesToBeBought}
+                                                </Text>
+                                                <Image
+                                                    src={'/coins/UsdcLogo.png'}
+                                                    alt="chakra image"
+                                                    width={8}
+                                                    style={{marginLeft: 8}}
+                                                />
+                                            </> : <div style={{display: 'flex', flexDirection: "row", alignItems: 'center'}}>
+                                                <Text style={{
+                                                    fontSize: 24,
+                                                }}><span
+                                                    style={{fontWeight: 'bold'}}>Total:</span> {(isNaN(parseInt(sharesToBeBought)) || parseInt(sharesToBeBought) < 1) ? sharePrice : sharePrice * sharesToBeBought}
+                                                </Text>
+                                                <Image
+                                                    src={'/coins/UsdcLogo.png'}
+                                                    alt="chakra image"
+                                                    width={7}
+                                                    height={7}
+                                                    style={{marginLeft: 8}}
+                                                />
+                                            </div>}
                                     </div>
                                     <Flex align="center">
                                         <Button
                                             p="0px"
                                             variant="no-hover"
                                             bg="transparent"
-                                            my={{sm: "1.5rem", lg: "0px"}}
+                                            my={{sm: "0px", lg: "0px"}}
                                             onClick={() => window.open("https://spookyswap.finance/swap?outputCurrency=0x04068da6c83afcfa0e13ba15a6696662335d5b75", '_blank')}
                                         >
                                             <Text
@@ -602,7 +619,7 @@ export default function Dashboard() {
                                         bg={"#FFFFFF"}
                                         p="0px"
                                         variant="no-hover"
-                                        my={{sm: "1.5rem", lg: "0px"}}
+                                        my={{sm: "0px", lg: "0px"}}
                                         onClick={() => {
                                             buyShares(sharesToBeBought);
                                         }}
