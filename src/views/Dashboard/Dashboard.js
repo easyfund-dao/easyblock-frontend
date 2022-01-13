@@ -99,6 +99,7 @@ export default function Dashboard() {
     const [isClaiming, setIsClaiming] = useState(false);
     const [isBuying, setIsBuying] = useState(false);
     const [isConnected, setIsConnected] = useState(false);
+    const [buyError, setBuyError] = useState(false);
 
     // Web3 methods
     async function changeNetworkToFTM() {
@@ -211,16 +212,23 @@ export default function Dashboard() {
     }
 
     async function buyShares(count) {
-        if (signer != null) {
-            setIsBuying(true);
-            if (purchaseAllowance >= 1000000000000) {
-                await easyBlockWithSigner.buyShares(purchaseTokenContract, count);
+        setBuyError(false);
+        try {
+            if (signer != null) {
+                setIsBuying(true);
+                if (purchaseAllowance >= 1000000000000) {
+                    await easyBlockWithSigner.buyShares(purchaseTokenContract, count);
+                } else {
+                    await depositTokenContractWithSigner.approve(CONTRACT_ADDRESS, 100000000000000);
+                    setTimeout(() => window.location.reload(), 30000);
+                }
             } else {
-                await depositTokenContractWithSigner.approve(CONTRACT_ADDRESS, 100000000000000);
-                setTimeout(() => window.location.reload(), 30000);
+                await connectWalletHandler();
             }
-        } else {
-            await connectWalletHandler();
+        } catch (e) {
+            console.log(e);
+            setIsBuying(false);
+            setBuyError(true);
         }
     }
 
@@ -522,7 +530,7 @@ export default function Dashboard() {
                             bgPosition="center"
                             bgRepeat="no-repeat"
                             w="100%"
-                            h={{sm: "500px", lg: "350px"}}
+                            h={{sm: "500px", lg: "400px"}}
                             bgSize="cover"
                             position="relative"
                             borderRadius="15px"
@@ -613,6 +621,11 @@ export default function Dashboard() {
                                                 />
                                             </div>}
                                     </div>
+                                    {buyError ?
+                                        <Text fontSize="16" fontWeight="bold" pb=".3rem" marginBottom={4}
+                                              color={"red.400"}>
+                                            Transaction error occured. Please be sure you have enough USDC in your account.
+                                        </Text> : null}
                                     <Flex align="center">
                                         <Button
                                             p="0px"
