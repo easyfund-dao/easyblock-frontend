@@ -50,8 +50,8 @@ export default function Dashboard() {
     // WEB3 START
     const connectWalletHandler = async () => {
         try {
-            console.log("hey");
-            window.ethereum.enable();
+            console.log("Inside wallet connect handler");
+            await window.ethereum.enable();
             let chainId = await provider.getNetwork();
             chainId = chainId['chainId'];
 
@@ -61,7 +61,6 @@ export default function Dashboard() {
                 }
             } else {
                 await connectAndGetUserData();
-                window.location.reload();
             }
         } catch (e) {
             console.log(e);
@@ -147,7 +146,6 @@ export default function Dashboard() {
                 let allowance = parseInt(await depositTokenContract.allowance(walletAddress, CONTRACT_ADDRESS), 10);
                 console.log(allowance);
                 setPurchaseAllowance(allowance);
-                setIsConnected(true);
             }
         } catch (e) {
             console.log(e);
