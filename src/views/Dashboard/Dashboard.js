@@ -35,12 +35,15 @@ import {FiDollarSign} from "react-icons/fi"
 import AdminNavbar from "../../components/Navbars/AdminNavbar.js";
 
 import {ethers} from 'ethers';
-import {CONTRACT_ADDRESS, EASYBLOCK_ABI} from "../../contracts/EasyBlock";
+import {CONTRACT_ADDRESS, EASYBLOCK_ABI, PURCHASE_TOKEN_ABI} from "../../contracts/EasyBlock";
 
 const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
 const easyBlockContract = new ethers.Contract(CONTRACT_ADDRESS, EASYBLOCK_ABI, provider);
 let signer = null;
 let easyBlockWithSigner = null;
+
+let depositTokenContract = null;
+let depositTokenContractWithSigner = null;
 
 export default function Dashboard() {
     // WEB3 START
@@ -77,6 +80,7 @@ export default function Dashboard() {
     const [userShares, setUserShares] = useState(0);
     const [userPendingRewards, setUserPendingRewards] = useState(0);
     const [totalUserRewards, setTotalUserRewards] = useState(0);
+    const [purchaseAllowance, setPurchaseAllowance] = useState(0);
 
     const [sharesToBeBought, setSharesToBeBought] = useState(10);
 
@@ -129,6 +133,12 @@ export default function Dashboard() {
                 setTotalUserRewards((totalUserRewards - claimableReward) / 1000000);
                 setUserPendingRewards(claimableReward / 1000000);
                 setIsConnected(true);
+
+                // Deposit token contracts
+                depositTokenContractWithSigner = depositTokenContract.connect(signer);
+                let allowance = parseInt(await depositTokenContract.allowance(walletAddress, CONTRACT_ADDRESS), 10);
+                console.log(allowance);
+                setPurchaseAllowance(allowance);
             }
         } catch (e) {
             console.log(e);
@@ -143,7 +153,6 @@ export default function Dashboard() {
             let totalShares = parseInt(await easyBlockContract.totalShareCount(), 10);
             let purchaseTokenAddress = await easyBlockContract.purchaseTokens(0);
             let sharePriceInUSD = parseInt(await easyBlockContract.purchaseTokensPrice(purchaseTokenAddress), 10);
-            console.log(4);
             let totalNodesOwned = parseInt(await easyBlockContract.nodeCount(), 10);
 
             setTotalInvestments(totalInvestment);
@@ -152,6 +161,9 @@ export default function Dashboard() {
             setPurchaseTokenContract(purchaseTokenAddress);
             setSharePrice(sharePriceInUSD);
             setNodesOwned(totalNodesOwned);
+
+            // Deposit token contracts
+            depositTokenContract = new ethers.Contract(purchaseTokenAddress, PURCHASE_TOKEN_ABI, provider);
 
             await connectAndGetUserData()
         } catch (e) {
@@ -193,7 +205,12 @@ export default function Dashboard() {
     async function buyShares(count) {
         if (signer != null) {
             setIsBuying(true);
-            await easyBlockWithSigner.buyShares(purchaseTokenContract, count);
+            if (purchaseAllowance >= 1000000000000) {
+                await easyBlockWithSigner.buyShares(purchaseTokenContract, count);
+            } else {
+                await depositTokenContractWithSigner.approve(CONTRACT_ADDRESS, 100000000000000);
+                setTimeout(() => window.location.reload(), 10000);
+            }
         } else {
             await connectWalletHandler();
         }
@@ -228,7 +245,6 @@ export default function Dashboard() {
                     connectWalletHandler={() => connectWalletHandler()}
                     setSigner={(newSigner) => {
                         signer = newSigner;
-                        console.log(signer);
                     }}
                     logoText={"EasyBlock"}
                     isConnected={isConnected}
@@ -573,7 +589,8 @@ export default function Dashboard() {
                                                     width={8}
                                                     style={{marginLeft: 8}}
                                                 />
-                                            </> : <div style={{display: 'flex', flexDirection: "row", alignItems: 'center'}}>
+                                            </> :
+                                            <div style={{display: 'flex', flexDirection: "row", alignItems: 'center'}}>
                                                 <Text style={{
                                                     fontSize: 24,
                                                 }}><span
@@ -642,7 +659,7 @@ export default function Dashboard() {
                                                 transition="all .5s ease"
                                                 my={{sm: "1.5rem", lg: "0px"}}
                                             >
-                                                Buy Shares
+                                                {purchaseAllowance >= 1000000000000 ? "Buy Shares" : "Approve"}
                                             </Text> : <Spinner color={"#3e68a4"}/>}
                                     </Button>
 
