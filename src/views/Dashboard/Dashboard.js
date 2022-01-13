@@ -37,7 +37,7 @@ import AdminNavbar from "../../components/Navbars/AdminNavbar.js";
 import {ethers} from 'ethers';
 import {CONTRACT_ADDRESS, EASYBLOCK_ABI, PURCHASE_TOKEN_ABI} from "../../contracts/EasyBlock";
 
-// window.ethereum.enable();
+window.ethereum.enable();
 const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
 const easyBlockContract = new ethers.Contract(CONTRACT_ADDRESS, EASYBLOCK_ABI, provider);
 let signer = null;
@@ -49,18 +49,22 @@ let depositTokenContractWithSigner = null;
 export default function Dashboard() {
     // WEB3 START
     const connectWalletHandler = async () => {
-        console.log("hey");
-        window.ethereum.enable();
-        let chainId = await provider.getNetwork();
-        chainId = chainId['chainId'];
+        try {
+            console.log("hey");
+            window.ethereum.enable();
+            let chainId = await provider.getNetwork();
+            chainId = chainId['chainId'];
 
-        if (chainId !== 250) {
-            if (window.confirm("Please switch to Fantom Network to use EasyBlock.")) {
-                await changeNetworkToFTM();
+            if (chainId !== 250) {
+                if (window.confirm("Please switch to Fantom Network to use EasyBlock.")) {
+                    await changeNetworkToFTM();
+                }
+            } else {
+                await connectAndGetUserData();
+                window.location.reload();
             }
-        } else {
-            await connectAndGetUserData();
-            window.location.reload();
+        } catch (e) {
+            console.log(e);
         }
     };
 
