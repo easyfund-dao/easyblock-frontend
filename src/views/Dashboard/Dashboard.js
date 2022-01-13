@@ -37,7 +37,7 @@ import AdminNavbar from "../../components/Navbars/AdminNavbar.js";
 import {ethers} from 'ethers';
 import {CONTRACT_ADDRESS, EASYBLOCK_ABI, PURCHASE_TOKEN_ABI} from "../../contracts/EasyBlock";
 
-window.ethereum.enable()
+// window.ethereum.enable();
 const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
 const easyBlockContract = new ethers.Contract(CONTRACT_ADDRESS, EASYBLOCK_ABI, provider);
 let signer = null;
@@ -49,7 +49,8 @@ let depositTokenContractWithSigner = null;
 export default function Dashboard() {
     // WEB3 START
     const connectWalletHandler = async () => {
-        window.ethereum.enable()
+        console.log("hey");
+        window.ethereum.enable();
         let chainId = await provider.getNetwork();
         chainId = chainId['chainId'];
 
@@ -141,6 +142,7 @@ export default function Dashboard() {
                 let allowance = parseInt(await depositTokenContract.allowance(walletAddress, CONTRACT_ADDRESS), 10);
                 console.log(allowance);
                 setPurchaseAllowance(allowance);
+                setIsConnected(true);
             }
         } catch (e) {
             console.log(e);
@@ -211,7 +213,7 @@ export default function Dashboard() {
                 await easyBlockWithSigner.buyShares(purchaseTokenContract, count);
             } else {
                 await depositTokenContractWithSigner.approve(CONTRACT_ADDRESS, 100000000000000);
-                setTimeout(() => window.location.reload(), 10000);
+                setTimeout(() => window.location.reload(), 30000);
             }
         } else {
             await connectWalletHandler();

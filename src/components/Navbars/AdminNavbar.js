@@ -134,8 +134,10 @@ export default function AdminNavbar(props) {
                         p="0px"
                         variant="no-hover"
                         my={{sm: "1.5rem", lg: "0px"}}
-                        onClick={() => {
-                            if (props.signer == null) {
+                        onClick={async () => {
+                            console.log("Connect button clicked");
+                            if (props.signer == null || await props.signer.getAddress() == null) {
+                                console.log("Should initiate connect");
                                 props.connectWalletHandler();
                             }
                         }}
