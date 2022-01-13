@@ -542,7 +542,7 @@ export default function Dashboard() {
                                     {nodesOwned < 1 ?
                                         <Text fontSize="16" fontWeight="bold" pb=".3rem" marginBottom={4}
                                               color={"green.400"}>
-                                            ! 50% discount only untill the protocol purchases its first StrongBlock Node
+                                            ! 50% discount only until the protocol purchases its first StrongBlock Node
                                             !
                                         </Text> : null}
                                     <div style={{
