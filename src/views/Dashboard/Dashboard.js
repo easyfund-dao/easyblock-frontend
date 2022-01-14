@@ -633,7 +633,7 @@ export default function Dashboard() {
                                             onClick={() => window.open("https://spookyswap.finance/swap?outputCurrency=0x04068da6c83afcfa0e13ba15a6696662335d5b75", '_blank')}
                                         >
                                             <Text
-                                                fontSize="sm"
+                                                fontSize="lg"
                                                 color={textColor}
                                                 fontWeight="bold"
                                                 cursor="pointer"
