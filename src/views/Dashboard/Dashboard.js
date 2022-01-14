@@ -28,14 +28,16 @@ import {
     WalletIcon,
 } from "components/Icons/Icons.js";
 import React, {useState} from "react";
-// react icons
+// React Icons
 import {BsArrowRight} from "react-icons/bs";
 import {FiDollarSign} from "react-icons/fi"
-
+// Navbar
 import AdminNavbar from "../../components/Navbars/AdminNavbar.js";
-
+// Web3
 import {ethers} from 'ethers';
 import {CONTRACT_ADDRESS, EASYBLOCK_ABI, PURCHASE_TOKEN_ABI} from "../../contracts/EasyBlock";
+// Toast
+import toast, {Toaster, useToasterStore} from 'react-hot-toast';
 
 window.ethereum.enable();
 const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
@@ -99,6 +101,16 @@ export default function Dashboard() {
     const [isBuying, setIsBuying] = useState(false);
     const [isConnected, setIsConnected] = useState(false);
     const [buyError, setBuyError] = useState(false);
+
+    const {toasts} = useToasterStore();
+    const TOAST_LIMIT = 1;
+
+    useEffect(() => {
+        toasts
+            .filter((t) => t.visible) // Only consider visible toasts
+            .filter((_, i) => i >= TOAST_LIMIT) // Is toast index over limit?
+            .forEach((t) => toast.remove(t.id)); // Dismiss – Use toast.remove(t.id) for no exit animation
+    }, [toasts]);
 
     // Web3 methods
     async function changeNetworkToFTM() {
@@ -225,6 +237,7 @@ export default function Dashboard() {
             }
         } catch (e) {
             console.log(e);
+            toast.error("Transaction error occured. Please be sure you have enough USDC in your account.", {duration: 5000,});
             setIsBuying(false);
             setBuyError(true);
         }
@@ -233,17 +246,23 @@ export default function Dashboard() {
     // CONTRACT EVENT LISTENERS
     easyBlockContract.on("RewardCollected", async (amount, address, event) => {
         if (event.event === "RewardCollected" && address === await signer.getAddress()) {
+            getSmartContractData();
             setUserPendingRewards(0);
             setIsClaiming(false);
+            toast.success("Rewards claimed successfully. Your balance will be updated soon.", {duration: 5000,});
         }
     });
     easyBlockContract.on("Investment", async (shareCount, price, address, event) => {
-        if (event.event === "Investment" && address === await signer.getAddress()) {
-            getSmartContractData();
-            setIsBuying(false);
-            setSharesToBeBought(0);
+            if (event.event === "Investment" && address === await signer.getAddress()) {
+                getSmartContractData();
+                setIsBuying(false);
+                console.log(isBuying);
+                setSharesToBeBought(0);
+                toast.success("Shares bought successfully. Your balance will be updated soon.", {duration: 5000,});
+
+            }
         }
-    });
+    );
 
     provider.on("network", (newNetwork, oldNetwork) => {
         if (oldNetwork) {
@@ -253,6 +272,7 @@ export default function Dashboard() {
 
     return (
         <div style={{width: "100%", display: "flex", alignItems: "center", justifyContent: "center", paddingTop: 32}}>
+            <Toaster/>
             <Portal>
                 <AdminNavbar
                     signer={signer}
@@ -622,7 +642,8 @@ export default function Dashboard() {
                                     {buyError ?
                                         <Text fontSize="16" fontWeight="bold" pb=".3rem" marginBottom={4}
                                               color={"red.400"}>
-                                            Transaction error occured. Please be sure you have enough USDC in your account.
+                                            Transaction error occured. Please be sure you have enough USDC in your
+                                            account.
                                         </Text> : null}
                                     <Flex align="center">
                                         <Button
