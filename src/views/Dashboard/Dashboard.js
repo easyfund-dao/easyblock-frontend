@@ -38,6 +38,10 @@ import {ethers} from 'ethers';
 import {CONTRACT_ADDRESS, EASYBLOCK_ABI, PURCHASE_TOKEN_ABI} from "../../contracts/EasyBlock";
 // Toast
 import toast, {Toaster, useToasterStore} from 'react-hot-toast';
+// Analytics
+import {initializeFirebase} from "../../util/firebase";
+
+initializeFirebase();
 
 window.ethereum.enable();
 const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
