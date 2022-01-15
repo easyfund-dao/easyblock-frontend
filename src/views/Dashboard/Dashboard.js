@@ -30,7 +30,8 @@ import {
 import React, {useState} from "react";
 // React Icons
 import {BsArrowRight} from "react-icons/bs";
-import {FiDollarSign} from "react-icons/fi"
+import {FiDollarSign} from "react-icons/fi";
+import {BiNetworkChart} from "react-icons/bi";
 // Navbar
 import AdminNavbar from "../../components/Navbars/AdminNavbar.js";
 // Web3
@@ -345,7 +346,7 @@ export default function Dashboard() {
                         />
                     </Button>
                 </Flex>
-                <SimpleGrid columns={{sm: 1, md: 2, xl: 4}} spacing="24px" paddingLeft={0} paddingRight={0}>
+                <SimpleGrid columns={{sm: 1, md: 2, xl: 5}} spacing="12px" paddingLeft={0} paddingRight={0}>
                     <Card minH="83px">
                         <CardBody>
                             <Flex flexDirection="row" align="center" justify="center" w="100%">
@@ -391,11 +392,35 @@ export default function Dashboard() {
                                         fontWeight="bold"
                                         pb=".1rem"
                                     >
+                                        Owned Nodes
+                                    </StatLabel>
+                                    <Flex>
+                                        <StatNumber fontSize="lg" color={textColor}>
+                                            {nodesOwned}
+                                        </StatNumber>
+                                    </Flex>
+                                </Stat>
+                                <IconBox as="box" h={"48px"} w={"48px"} bg={"#FFFFFF"}>
+                                    <BiNetworkChart h={"36px"} w={"36px"} color={"#3e68a4"}/>
+                                </IconBox>
+                            </Flex>
+                        </CardBody>
+                    </Card>
+                    <Card minH="83px">
+                        <CardBody>
+                            <Flex flexDirection="row" align="center" justify="center" w="100%">
+                                <Stat me="auto">
+                                    <StatLabel
+                                        fontSize="sm"
+                                        color="gray.400"
+                                        fontWeight="bold"
+                                        pb=".1rem"
+                                    >
                                         Total Investment
                                     </StatLabel>
                                     <Flex>
                                         <StatNumber fontSize="lg" color={textColor}>
-                                            {totalInvestments} $
+                                            {totalInvestments.toFixed(2)} $
                                         </StatNumber>
                                     </Flex>
                                 </Stat>
@@ -415,11 +440,11 @@ export default function Dashboard() {
                                         fontWeight="bold"
                                         pb=".1rem"
                                     >
-                                        Total Revenue Generated
+                                        Total Revenue
                                     </StatLabel>
                                     <Flex>
                                         <StatNumber fontSize="lg" color={textColor}>
-                                            {totalRewardsPaid.toFixed(4)} $
+                                            {totalRewardsPaid.toFixed(2)} $
                                         </StatNumber>
                                     </Flex>
                                 </Stat>
@@ -444,7 +469,7 @@ export default function Dashboard() {
                                     </StatLabel>
                                     <Flex>
                                         <StatNumber fontSize="lg" color={textColor} fontWeight="bold">
-                                            {totalShareCount === 0 ? 0 : (nodesOwned * 3 * strongPrice / totalShareCount * 100).toFixed(4)} $
+                                            {totalShareCount === 0 ? 0 : (nodesOwned * 3 * strongPrice / totalShareCount * 100).toFixed(2)} $
                                         </StatNumber>
                                     </Flex>
                                 </Stat>
