@@ -504,17 +504,44 @@ export default function Dashboard() {
                                         color={textColor}
                                         fontWeight="bold"
                                         pb=".5rem"
+                                        marginTop="8px"
                                     >
-                                        Shares Owned: {userShares}
+                                        - Shares Owned: {userShares}
                                     </Text>
                                     <Text
-                                        fontSize="md"
+                                        fontSize="xl"
                                         color={textColor}
                                         fontWeight="bold"
                                         pb=".5rem"
+                                        marginTop="-16px"
                                     >
-                                        All Time Earnings: {totalUserRewards.toFixed(4)} $
+                                        - All Time Earnings: {totalUserRewards.toFixed(4)} $
                                     </Text>
+
+                                    <Card minH="83px" backgroundColor={"#FFFFFF"} marginBottom={"16px"}>
+                                        <CardBody>
+                                            <Flex flexDirection="row" align="center" justify="center" w="100%">
+                                                <Stat me="auto">
+                                                    <StatLabel
+                                                        fontSize="sm"
+                                                        color="#3e68a4"
+                                                        fontWeight="bold"
+                                                        pb=".1rem"
+                                                    >
+                                                        Expected Monthly Revenue
+                                                    </StatLabel>
+                                                    <Flex>
+                                                        <StatNumber fontSize="lg" color={"gray.600"} fontWeight="bold">
+                                                            {totalShareCount === 0 ? 0 : (nodesOwned * 3 * strongPrice / totalShareCount * userShares).toFixed(4)} $
+                                                        </StatNumber>
+                                                    </Flex>
+                                                </Stat>
+                                                <IconBox as="box" h={"48px"} w={"48px"} bg={"#3e68a4"}>
+                                                    <FiDollarSign h={"48px"} w={"48px"} color={"#fff"}/>
+                                                </IconBox>
+                                            </Flex>
+                                        </CardBody>
+                                    </Card>
                                     <Text fontSize="sm" color="gray.400" fontWeight="normal">
                                         You can buy EasyBlock shares with USDC and start earning rewards from
                                         StrongBlock nodes.
@@ -530,6 +557,7 @@ export default function Dashboard() {
                                     borderRadius="15px"
                                     flexDirection={"column"}
                                     padding={4}
+                                    width={"50%"}
                                 >
                                     <Image
                                         src={'/coins/UsdcLogo.png'}
@@ -541,8 +569,9 @@ export default function Dashboard() {
                                         fontWeight: "bold",
                                         fontSize: 24,
                                         color: "#3e68a4",
-                                        marginTop: 8
-                                    }}>Pending Rewards: <span
+                                        marginTop: 8,
+                                        textAlign: 'center',
+                                    }}>Pending Rewards: <br/><span
                                         style={{fontWeight: 'normal'}}>{userPendingRewards.toFixed(4)} $</span></Text>
                                     <Button
                                         bg={"#3e68a4"}
