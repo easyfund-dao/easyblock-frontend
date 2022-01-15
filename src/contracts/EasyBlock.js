@@ -1,4 +1,4 @@
-export const CONTRACT_ADDRESS = "0xAf9849305aF4BA29Abb2b2a5a9f054f22a9FDD10";
+export const CONTRACT_ADDRESS = "0x2e21638E961D9436825353D22c3912A29556262D";
 export const EASYBLOCK_ABI = [{
     "inputs": [{"internalType": "uint256", "name": "_fee", "type": "uint256"}],
     "stateMutability": "nonpayable",
