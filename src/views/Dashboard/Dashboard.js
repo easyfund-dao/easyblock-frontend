@@ -44,9 +44,22 @@ import {initializeFirebase} from "../../util/firebase";
 
 initializeFirebase();
 
-window.ethereum.enable();
-const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
+
+console.log(window.ethereum);
+let provider;
+let metamaskInstalled = false;
+if (window.ethereum != null) {
+    metamaskInstalled = true;
+    console.log("Metamask installed.");
+    window.ethereum.enable();
+    provider = new ethers.providers.Web3Provider(window.ethereum, "any");
+} else {
+    console.log("Metamask not installed.");
+    provider = new ethers.providers.getDefaultProvider("https://rpc.ftm.tools");
+}
+
 const easyBlockContract = new ethers.Contract(CONTRACT_ADDRESS, EASYBLOCK_ABI, provider);
+
 let signer = null;
 let easyBlockWithSigner = null;
 
@@ -56,6 +69,10 @@ let depositTokenContractWithSigner = null;
 export default function Dashboard() {
     // WEB3 START
     const connectWalletHandler = async () => {
+        if (!metamaskInstalled) {
+            alert("Please install Metamask to use EasyBlock.");
+            return;
+        }
         try {
             console.log("Inside wallet connect handler");
             await window.ethereum.enable();
@@ -582,6 +599,10 @@ export default function Dashboard() {
                                         variant="no-hover"
                                         my={{sm: "1.5rem", lg: "0px"}}
                                         onClick={() => {
+                                            if (!metamaskInstalled) {
+                                                alert("Please install Metamask to use EasyBlock.");
+                                                return;
+                                            }
                                             claimRewards();
                                         }}
                                         paddingLeft={8}
@@ -744,6 +765,10 @@ export default function Dashboard() {
                                         variant="no-hover"
                                         my={{sm: "0px", lg: "0px"}}
                                         onClick={() => {
+                                            if (!metamaskInstalled) {
+                                                alert("Please install Metamask to use EasyBlock.");
+                                                return;
+                                            }
                                             buyShares(sharesToBeBought);
                                         }}
                                         paddingLeft={8}
