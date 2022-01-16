@@ -560,7 +560,7 @@ export default function Dashboard() {
                                     borderRadius="15px"
                                     flexDirection={"column"}
                                     padding={4}
-                                    width={"50%"}
+                                    width={window.innerWidth < 960 ? "100%" : "50%"}
                                 >
                                     <Image
                                         src={'/coins/UsdcLogo.png'}
