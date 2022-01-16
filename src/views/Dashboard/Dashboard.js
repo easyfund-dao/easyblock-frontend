@@ -191,7 +191,10 @@ export default function Dashboard() {
 
             await connectAndGetUserData()
         } catch (e) {
-            const chainId = await provider.getNetwork();
+            console.log("General methods error: ");
+            console.log(e);
+            let chainId = await provider.getNetwork();
+            chainId = chainId['chainId'];
             if (chainId !== 250) {
                 if (window.confirm("Please switch to Fantom Network to use EasyBlock.")) {
                     await changeNetworkToFTM();
