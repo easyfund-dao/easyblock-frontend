@@ -119,6 +119,8 @@ export default function Dashboard() {
     const overlayRef = React.useRef();
 
     // UI CONTROLLERS
+    const [generalDataLoading, setGeneralDataLoading] = useState(true);
+    const [userDataLoading, setUserDataLoading] = useState(true);
     const [isClaiming, setIsClaiming] = useState(false);
     const [isBuying, setIsBuying] = useState(false);
     const [isConnected, setIsConnected] = useState(false);
@@ -158,9 +160,12 @@ export default function Dashboard() {
     }
 
     async function connectAndGetUserData() {
+        console.log("Get user data.");
         try {
             // Info about signer
             signer = provider.getSigner();
+            console.log("Signer: ");
+            console.log(signer);
             if (signer != null) {
                 let walletAddress = await signer.getAddress();
                 setUserWallet(walletAddress);
@@ -178,8 +183,12 @@ export default function Dashboard() {
                 // Deposit token contracts
                 depositTokenContractWithSigner = depositTokenContract.connect(signer);
                 let allowance = parseInt(await depositTokenContract.allowance(walletAddress, CONTRACT_ADDRESS), 10);
-                console.log(allowance);
                 setPurchaseAllowance(allowance);
+                setUserDataLoading(false);
+
+                console.log("Get general data finished.");
+            } else {
+                setUserDataLoading(false);
             }
         } catch (e) {
             console.log(e);
@@ -187,6 +196,7 @@ export default function Dashboard() {
     }
 
     async function getSmartContractData() {
+        console.log("Get general data.");
         // Data from contract
         try {
             let totalInvestment = parseInt(await easyBlockContract.totalInvestmentsInUSD(), 10);
@@ -205,6 +215,10 @@ export default function Dashboard() {
 
             // Deposit token contracts
             depositTokenContract = new ethers.Contract(purchaseTokenAddress, PURCHASE_TOKEN_ABI, provider);
+
+            // UI Change
+            setGeneralDataLoading(false);
+            console.log("Get general data finished.");
 
             await connectAndGetUserData()
         } catch (e) {
@@ -271,17 +285,22 @@ export default function Dashboard() {
     // CONTRACT EVENT LISTENERS
     easyBlockContract.on("RewardCollected", async (amount, address, event) => {
         if (event.event === "RewardCollected" && address === await signer.getAddress()) {
-            getSmartContractData();
+            // await getSmartContractData();
+            window.location.reload();
             setUserPendingRewards(0);
             setIsClaiming(false);
             toast.success("Rewards claimed successfully. Your balance will be updated soon.", {duration: 5000,});
         }
     });
     easyBlockContract.on("Investment", async (shareCount, price, address, event) => {
+            console.log("Investment event");
             if (event.event === "Investment" && address === await signer.getAddress()) {
-                getSmartContractData();
+                console.log("Investment event | if condition");
+                setGeneralDataLoading(true);
+                setUserDataLoading(true);
+                // await getSmartContractData();
+                window.location.reload();
                 setIsBuying(false);
-                console.log(isBuying);
                 setSharesToBeBought(0);
                 toast.success("Shares bought successfully. Your balance will be updated soon.", {duration: 5000,});
 
@@ -415,9 +434,11 @@ export default function Dashboard() {
                                         Owned Nodes
                                     </StatLabel>
                                     <Flex>
-                                        <StatNumber fontSize="lg" color={textColor}>
-                                            {nodesOwned}
-                                        </StatNumber>
+                                        {generalDataLoading ?
+                                            <Spinner/> :
+                                            <StatNumber fontSize="lg" color={textColor}>
+                                                {nodesOwned}
+                                            </StatNumber>}
                                     </Flex>
                                 </Stat>
                                 <IconBox as="box" h={"48px"} w={"48px"} bg={"#FFFFFF"}>
@@ -439,9 +460,11 @@ export default function Dashboard() {
                                         Total Investment
                                     </StatLabel>
                                     <Flex>
-                                        <StatNumber fontSize="lg" color={textColor}>
-                                            {totalInvestments.toFixed(2)} $
-                                        </StatNumber>
+                                        {generalDataLoading ?
+                                            <Spinner/> :
+                                            <StatNumber fontSize="lg" color={textColor}>
+                                                {totalInvestments.toFixed(2)} $
+                                            </StatNumber>}
                                     </Flex>
                                 </Stat>
                                 <IconBox as="box" h={"48px"} w={"48px"} bg={"#FFFFFF"}>
@@ -463,9 +486,11 @@ export default function Dashboard() {
                                         Total Revenue
                                     </StatLabel>
                                     <Flex>
-                                        <StatNumber fontSize="lg" color={textColor}>
-                                            {totalRewardsPaid.toFixed(2)} $
-                                        </StatNumber>
+                                        {generalDataLoading ?
+                                            <Spinner/> :
+                                            <StatNumber fontSize="lg" color={textColor}>
+                                                {totalRewardsPaid.toFixed(2)} $
+                                            </StatNumber>}
                                     </Flex>
                                 </Stat>
                                 <Spacer/>
@@ -488,9 +513,11 @@ export default function Dashboard() {
                                         Monthly Revenue <br/>/ 100 Shares
                                     </StatLabel>
                                     <Flex>
-                                        <StatNumber fontSize="lg" color={textColor} fontWeight="bold">
-                                            {totalShareCount === 0 ? 0 : (nodesOwned * 3 * strongPrice / totalShareCount * 100).toFixed(2)} $
-                                        </StatNumber>
+                                        {generalDataLoading ?
+                                            <Spinner/> :
+                                            <StatNumber fontSize="lg" color={textColor} fontWeight="bold">
+                                                {totalShareCount === 0 ? 0 : (nodesOwned * 3 * strongPrice / totalShareCount * 100).toFixed(2)} $
+                                            </StatNumber>}
                                     </Flex>
                                 </Stat>
                                 <IconBox as="box" h={"48px"} w={"48px"} bg={"#FFFFFF"}>
@@ -517,7 +544,9 @@ export default function Dashboard() {
                                 >
                                     <Text fontSize="sm" color="gray.400" fontWeight="bold">
                                         Connected
-                                        Wallet: {signer == null ? "Please Connect Wallet" : userWallet}
+                                        Wallet: {userDataLoading ? <Spinner/> : <Text>
+                                        {
+                                            signer == null ? "Please Connect Wallet" : userWallet}</Text>}
                                     </Text>
                                     <Text
                                         fontSize="xl"
@@ -526,7 +555,8 @@ export default function Dashboard() {
                                         pb=".5rem"
                                         marginTop="8px"
                                     >
-                                        - Shares Owned: {userShares}
+                                        - Shares Owned: {userDataLoading ? <Spinner/> : <span>
+                                        {userShares}</span>}
                                     </Text>
                                     <Text
                                         fontSize="xl"
@@ -535,7 +565,8 @@ export default function Dashboard() {
                                         pb=".5rem"
                                         marginTop="-16px"
                                     >
-                                        - All Time Earnings: {totalUserRewards.toFixed(4)} $
+                                        - All Time Earnings: {userDataLoading ? <Spinner/> :
+                                        <span>{totalUserRewards.toFixed(4)}</span>} $
                                     </Text>
 
                                     <Card minH="83px" backgroundColor={"#FFFFFF"} marginBottom={"16px"}>
@@ -552,7 +583,8 @@ export default function Dashboard() {
                                                     </StatLabel>
                                                     <Flex>
                                                         <StatNumber fontSize="lg" color={"gray.600"} fontWeight="bold">
-                                                            {totalShareCount === 0 ? 0 : (nodesOwned * 3 * strongPrice / totalShareCount * userShares).toFixed(4)} $
+                                                            {userDataLoading ? <Spinner/> : <span>
+                                                                {totalShareCount === 0 ? 0 : (nodesOwned * 3 * strongPrice / totalShareCount * userShares).toFixed(4)}</span>} $
                                                         </StatNumber>
                                                     </Flex>
                                                 </Stat>
@@ -591,8 +623,10 @@ export default function Dashboard() {
                                         color: "#3e68a4",
                                         marginTop: 8,
                                         textAlign: 'center',
-                                    }}>Pending Rewards: <br/><span
-                                        style={{fontWeight: 'normal'}}>{userPendingRewards.toFixed(4)} $</span></Text>
+                                    }}>Pending Rewards: <br/>
+                                        {userDataLoading ? <Spinner/> : <span
+                                            style={{fontWeight: 'normal'}}>{userPendingRewards.toFixed(4)} $</span>}
+                                    </Text>
                                     <Button
                                         bg={"#3e68a4"}
                                         p="0px"
@@ -697,7 +731,8 @@ export default function Dashboard() {
                                                     fontSize: 24,
                                                     marginLeft: 32
                                                 }}><span
-                                                    style={{fontWeight: 'bold'}}>Total:</span> {(isNaN(parseInt(sharesToBeBought)) || parseInt(sharesToBeBought) < 1) ? sharePrice : sharePrice * sharesToBeBought}
+                                                    style={{fontWeight: 'bold'}}>Total:</span> {generalDataLoading ?
+                                                    <Spinner/> : (isNaN(parseInt(sharesToBeBought)) || parseInt(sharesToBeBought) < 1) ? sharePrice : sharePrice * sharesToBeBought}
                                                 </Text>
                                                 <Image
                                                     src={'/coins/UsdcLogo.png'}
@@ -710,7 +745,9 @@ export default function Dashboard() {
                                                 <Text style={{
                                                     fontSize: 24,
                                                 }}><span
-                                                    style={{fontWeight: 'bold'}}>Total:</span> {(isNaN(parseInt(sharesToBeBought)) || parseInt(sharesToBeBought) < 1) ? sharePrice : sharePrice * sharesToBeBought}
+                                                    style={{fontWeight: 'bold'}}>Total:</span>
+                                                    {generalDataLoading ?
+                                                        <Spinner/> : (isNaN(parseInt(sharesToBeBought)) || parseInt(sharesToBeBought) < 1) ? sharePrice : sharePrice * sharesToBeBought}
                                                 </Text>
                                                 <Image
                                                     src={'/coins/UsdcLogo.png'}
@@ -776,7 +813,7 @@ export default function Dashboard() {
                                         paddingTop={6}
                                         paddingBottom={6}
                                     >
-                                        {!isBuying ?
+                                        {!isBuying || userDataLoading ?
                                             <Text
                                                 fontSize="32"
                                                 color={"#3e68a4"}
