@@ -392,6 +392,37 @@ export default function Dashboard() {
                             _hover={{transform: "translateX(20%)"}}
                         />
                     </Button>
+                    <Button
+                        p="0px"
+                        variant="no-hover"
+                        bg="transparent"
+                        my={{sm: "1.5rem", lg: "0px"}}
+                        onClick={() => window.open("https://docs.easyblock.finance/faq", '_blank')}
+                    >
+                        <Text
+                            fontSize="sm"
+                            color={"#3e68a4"}
+                            fontWeight="bold"
+                            cursor="pointer"
+                            transition="all .5s ease"
+                            my={{sm: "1.5rem", lg: "0px"}}
+                            _hover={{me: "4px"}}
+                        >
+                            FAQ
+                        </Text>
+                        <Icon
+                            color={"#3e68a4"}
+                            as={BsArrowRight}
+                            w="20px"
+                            h="20px"
+                            fontSize="2xl"
+                            transition="all .5s ease"
+                            mx=".3rem"
+                            cursor="pointer"
+                            pt="4px"
+                            _hover={{transform: "translateX(20%)"}}
+                        />
+                    </Button>
                 </Flex>
                 <SimpleGrid columns={{sm: 1, md: 2, xl: 5}} spacing="12px" paddingLeft={0} paddingRight={0}>
                     <Card minH="83px">
