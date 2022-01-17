@@ -635,9 +635,11 @@ export default function Dashboard() {
                                         onClick={() => {
                                             if (!metamaskInstalled) {
                                                 alert("Please install Metamask to use EasyBlock.");
-                                                return;
+                                            } else if (!isConnected) {
+                                                connectWalletHandler();
+                                            } else {
+                                                claimRewards();
                                             }
-                                            claimRewards();
                                         }}
                                         paddingLeft={8}
                                         paddingRight={8}
@@ -804,9 +806,11 @@ export default function Dashboard() {
                                         onClick={() => {
                                             if (!metamaskInstalled) {
                                                 alert("Please install Metamask to use EasyBlock.");
-                                                return;
+                                            } else if (!isConnected) {
+                                                connectWalletHandler();
+                                            } else {
+                                                buyShares(sharesToBeBought);
                                             }
-                                            buyShares(sharesToBeBought);
                                         }}
                                         paddingLeft={8}
                                         paddingRight={8}
