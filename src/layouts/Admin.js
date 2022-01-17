@@ -12,6 +12,8 @@ import MainPanel from "../components/Layout/MainPanel";
 import PanelContainer from "../components/Layout/PanelContainer";
 import PanelContent from "../components/Layout/PanelContent";
 
+import DashboardView from "../views/Dashboard/Dashboard";
+
 export default function Dashboard(props) {
     const {...rest} = props;
     // states and functions
@@ -104,8 +106,7 @@ export default function Dashboard(props) {
                     <PanelContent>
                         <PanelContainer>
                             <Switch>
-                                {getRoutes(routes)}
-                                <Redirect from="/admin" to="/admin/dashboard"/>
+                                <DashboardView/>
                             </Switch>
                         </PanelContainer>
                     </PanelContent>

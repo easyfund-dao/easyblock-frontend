@@ -24,8 +24,8 @@ import AdminLayout from "layouts/Admin.js";
 ReactDOM.render(
   <HashRouter>
     <Switch>
-      <Route path={`/admin`} component={AdminLayout} />
-      <Redirect from={`/`} to="/admin/dashboard" />
+      <Route path={`/`} component={AdminLayout} />
+      <Redirect from={'/#/admin/dashboard'} to={'/'}/>
     </Switch>
   </HashRouter>,
   document.getElementById("root")
