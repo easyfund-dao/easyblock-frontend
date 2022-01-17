@@ -96,17 +96,13 @@ export default function AdminNavbar(props) {
                 pb="8px"
                 left={""}
                 right={""}
-                px={{
-                    sm: "0",
-                    md: "30px",
-                }}
                 ps={{
                     xl: "12px",
                 }}
                 pt="8px"
                 top="18px"
-                w={{sm: "calc(100vw - 30px)", xl: "calc(100vw - 75px - 275px)"}}
                 width={"100%"}
+                maxWidth={"1400"}
             >
                 <Flex
                     w="100%"
@@ -115,8 +111,7 @@ export default function AdminNavbar(props) {
                         md: "row",
                     }}
                     alignItems={{xl: "center"}}
-                    paddingLeft={window.innerWidth >= 960 ? "16" : "0"}
-                    paddingRight="16"
+                    paddingLeft={window.innerWidth < 400 ? "8" : "0"}
                 >
                     <img src={'/favicon.png'} style={{width: 64, height: 64}}/>
                     {window.innerWidth >= 960 ?
@@ -141,6 +136,7 @@ export default function AdminNavbar(props) {
                         paddingRight={8}
                         paddingTop={4}
                         paddingBottom={4}
+                        marginRight={window.innerWidth < 400 ? "8" : "0"}
                     >
                         <Text
                             fontSize="24"
