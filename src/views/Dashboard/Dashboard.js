@@ -766,38 +766,42 @@ export default function Dashboard() {
                                             Transaction error occured. Please be sure you have enough USDC in your
                                             account.
                                         </Text> : null}
-                                    <Flex align="center">
-                                        <Button
-                                            p="0px"
-                                            variant="no-hover"
-                                            bg="transparent"
-                                            my={{sm: "0px", lg: "0px"}}
-                                            onClick={() => window.open("https://spookyswap.finance/swap?outputCurrency=0x04068da6c83afcfa0e13ba15a6696662335d5b75", '_blank')}
-                                        >
-                                            <Text
-                                                fontSize="lg"
-                                                color={textColor}
-                                                fontWeight="bold"
-                                                cursor="pointer"
-                                                transition="all .5s ease"
-                                                my={{sm: "1.5rem", lg: "0px"}}
-                                                _hover={{me: "4px"}}
+                                    {userDataLoading ? null : purchaseAllowance >= 1000000000000 ?
+                                        <Flex align="center">
+                                            <Button
+                                                p="0px"
+                                                variant="no-hover"
+                                                bg="transparent"
+                                                my={{sm: "0px", lg: "0px"}}
+                                                onClick={() => window.open("https://swap.spiritswap.finance/#/exchange/swap/FTM/USDC", '_blank')}
                                             >
-                                                Get USDC on SpookySwap
-                                            </Text>
-                                            <Icon
-                                                as={BsArrowRight}
-                                                w="20px"
-                                                h="20px"
-                                                fontSize="2xl"
-                                                transition="all .5s ease"
-                                                mx=".3rem"
-                                                cursor="pointer"
-                                                pt="4px"
-                                                _hover={{transform: "translateX(20%)"}}
-                                            />
-                                        </Button>
-                                    </Flex>
+                                                <Text
+                                                    fontSize="lg"
+                                                    color={textColor}
+                                                    fontWeight="bold"
+                                                    cursor="pointer"
+                                                    transition="all .5s ease"
+                                                    my={{sm: "1.5rem", lg: "0px"}}
+                                                    _hover={{me: "4px"}}
+                                                >
+                                                    Get USDC on SpiritSwap
+                                                </Text>
+                                                <Icon
+                                                    as={BsArrowRight}
+                                                    w="20px"
+                                                    h="20px"
+                                                    fontSize="2xl"
+                                                    transition="all .5s ease"
+                                                    mx=".3rem"
+                                                    cursor="pointer"
+                                                    pt="4px"
+                                                    _hover={{transform: "translateX(20%)"}}
+                                                />
+                                            </Button>
+                                        </Flex>
+                                        :
+                                        <Text fontSize={"md"} marginBottom={"4"}>You only need to Approve the first
+                                            time you are using the protocol.</Text>}
                                     <Button
                                         bg={"#FFFFFF"}
                                         p="0px"
