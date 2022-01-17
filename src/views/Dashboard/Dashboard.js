@@ -193,9 +193,11 @@ export default function Dashboard() {
 
                 console.log("Get general data finished.");
             } else {
+                setIsConnected(false);
                 setUserDataLoading(false);
             }
         } catch (e) {
+            setIsConnected(false);
             console.log("Get user data error: ");
             console.log(e);
         }
@@ -552,7 +554,7 @@ export default function Dashboard() {
                                         Connected
                                         Wallet: {userDataLoading ? <Spinner/> : <Text>
                                         {
-                                            signer == null ? "Please Connect Wallet" : userWallet}</Text>}
+                                            !isConnected ? "Please Connect Wallet" : userWallet}</Text>}
                                     </Text>
                                     <Text
                                         fontSize="xl"
