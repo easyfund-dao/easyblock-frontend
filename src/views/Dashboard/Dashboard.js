@@ -164,9 +164,14 @@ export default function Dashboard() {
         try {
             // Info about signer
             signer = provider.getSigner();
-            console.log("Signer: ");
-            console.log(signer);
-            if (signer != null) {
+            let shouldProceed = false;
+            try {
+                await signer.getAddress();
+                shouldProceed = true;
+            } catch (e) {
+                setUserDataLoading(false);
+            }
+            if (signer != null && shouldProceed) {
                 let walletAddress = await signer.getAddress();
                 setUserWallet(walletAddress);
                 easyBlockWithSigner = easyBlockContract.connect(signer);
@@ -191,6 +196,7 @@ export default function Dashboard() {
                 setUserDataLoading(false);
             }
         } catch (e) {
+            console.log("Get user data error: ");
             console.log(e);
         }
     }
