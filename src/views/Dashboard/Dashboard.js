@@ -717,12 +717,6 @@ export default function Dashboard() {
                                     <Text fontSize="24" fontWeight="bold" pb=".3rem" marginBottom={4}>
                                         Buy EasyBlock Shares
                                     </Text>
-                                    {nodesOwned < 1 ?
-                                        <Text fontSize="16" fontWeight="bold" pb=".3rem" marginBottom={4}
-                                              color={"green.400"}>
-                                            ! 50% discount only until the protocol purchases its first StrongBlock Node
-                                            !
-                                        </Text> : null}
                                     <div style={{
                                         display: 'flex',
                                         alignItems: 'flex-start',
