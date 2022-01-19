@@ -439,19 +439,8 @@ export default function Dashboard() {
                                     </StatLabel>
                                     <Flex>
                                         <StatNumber fontSize="lg" color={textColor}>
-                                            365%
+                                            265%
                                         </StatNumber>
-                                        <StatHelpText
-                                            alignSelf="flex-end"
-                                            justifySelf="flex-end"
-                                            m="0px"
-                                            color="green.400"
-                                            fontWeight="bold"
-                                            ps="3px"
-                                            fontSize="md"
-                                        >
-                                            {"APY: 3778%"}
-                                        </StatHelpText>
                                     </Flex>
                                 </Stat>
                                 <IconBox as="box" h={"48px"} w={"48px"} bg={"#FFFFFF"}>
