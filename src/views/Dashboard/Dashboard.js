@@ -104,6 +104,7 @@ export default function Dashboard() {
     const [nodesOwned, setNodesOwned] = useState(0);
     const [purchaseTokenContract, setPurchaseTokenContract] = useState("");
     const [sharePrice, setSharePrice] = useState(0);
+    const [totalBalance, setTotalBalance] = useState(1);
 
     // User stats
     const [userWallet, setUserWallet] = useState("");
@@ -159,6 +160,20 @@ export default function Dashboard() {
         }
     }
 
+
+    async function getNeededAmountData() {
+        let balance = 0;
+        fetch('https://openapi.debank.com/v1/user/total_balance?id=0x2e21638e961d9436825353d22c3912a29556262d').then(response => response.json()).then(data => {
+                balance += data['total_usd_value'];
+                fetch('https://openapi.debank.com/v1/user/total_balance?id=0xde6f949cec8ba92a8d963e9a0065c03753802d14').then(response => response.json()).then(data => {
+                        balance += data['total_usd_value'];
+                        setTotalBalance(balance.toFixed(2));
+                    }
+                );
+            }
+        );
+    }
+
     async function connectAndGetUserData() {
         console.log("Get user data.");
         try {
@@ -200,6 +215,7 @@ export default function Dashboard() {
             setIsConnected(false);
             console.log("Get user data error: ");
             console.log(e);
+            await connectAndGetUserData();
         }
     }
 
@@ -238,6 +254,8 @@ export default function Dashboard() {
                 if (window.confirm("Please switch to Fantom Network to use EasyBlock.")) {
                     await changeNetworkToFTM();
                 }
+            } else {
+                getSmartContractData();
             }
         }
     }
@@ -246,16 +264,23 @@ export default function Dashboard() {
         if (colorMode === "light") {
             toggleColorMode();
         }
+        try {
+            // Strong price from coin gecko
+            fetch('https://api.coingecko.com/api/v3/coins/strong').then(response => response.json()).then(data => {
+                    let price = data.market_data.current_price.usd;
+                    setStrongPrice(price);
+                }
+            );
+        } catch (e) {
+            console.log(e);
+        }
+        try {
+            getNeededAmountData();
+        } catch (e) {
+            console.log(e);
+        }
 
         await getSmartContractData();
-
-        // Strong price from coin gecko
-        fetch('https://api.coingecko.com/api/v3/coins/strong').then(response => response.json()).then(data => {
-                let price = data.market_data.current_price.usd;
-                setStrongPrice(price);
-            }
-        )
-
     }, [signer]);
 
     // CONTRACT INTERACTION FUNCTIONS
@@ -439,7 +464,7 @@ export default function Dashboard() {
                                     </StatLabel>
                                     <Flex>
                                         <StatNumber fontSize="lg" color={textColor}>
-                                            265%
+                                            ~230%
                                         </StatNumber>
                                     </Flex>
                                 </Stat>
@@ -504,6 +529,43 @@ export default function Dashboard() {
                     <Card minH="83px">
                         <CardBody>
                             <Flex flexDirection="row" align="center" justify="center" w="100%">
+                                <Stat me="auto">
+                                    <StatLabel
+                                        fontSize="sm"
+                                        color="gray.400"
+                                        fontWeight="bold"
+                                        pb=".1rem"
+                                    >
+                                        Till Next Node
+                                    </StatLabel>
+                                    <Flex>
+                                        {generalDataLoading ?
+                                            <Spinner/> :
+                                            <StatNumber fontSize="lg" color={textColor} fontWeight="bold">
+                                                {(strongPrice * 10 + 500 - totalBalance).toFixed(2)} $
+                                            </StatNumber>}
+                                        {Math.floor(totalBalance / (strongPrice * 10 + 500)) > 0 ? <StatHelpText
+                                            alignSelf="flex-end"
+                                            justifySelf="flex-end"
+                                            m="0px"
+                                            color="green.400"
+                                            fontWeight="bold"
+                                            ps="3px"
+                                            fontSize="sm"
+                                        >
+                                            +{Math.floor(totalBalance / (strongPrice * 10 + 500))} Nodes
+                                        </StatHelpText> : null}
+                                    </Flex>
+                                </Stat>
+                                <IconBox as="box" h={"48px"} w={"48px"} bg={"#FFFFFF"}>
+                                    <FiDollarSign h={"48px"} w={"48px"} color={"#3e68a4"}/>
+                                </IconBox>
+                            </Flex>
+                        </CardBody>
+                    </Card>
+                    <Card minH="83px">
+                        <CardBody>
+                            <Flex flexDirection="row" align="center" justify="center" w="100%">
                                 <Stat>
                                     <StatLabel
                                         fontSize="sm"
@@ -528,6 +590,7 @@ export default function Dashboard() {
                             </Flex>
                         </CardBody>
                     </Card>
+                    {/*
                     <Card minH="83px">
                         <CardBody>
                             <Flex flexDirection="row" align="center" justify="center" w="100%">
@@ -554,6 +617,7 @@ export default function Dashboard() {
                             </Flex>
                         </CardBody>
                     </Card>
+                    */}
                 </SimpleGrid>
                 <Grid
                     templateColumns={{md: "1fr", lg: "1.8fr 1.2fr"}}
