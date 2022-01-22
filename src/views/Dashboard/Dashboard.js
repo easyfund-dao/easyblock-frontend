@@ -542,9 +542,9 @@ export default function Dashboard() {
                                         {generalDataLoading ?
                                             <Spinner/> :
                                             <StatNumber fontSize="lg" color={textColor} fontWeight="bold">
-                                                {(strongPrice * 10 + 500 - totalBalance).toFixed(2)} $
+                                                {(strongPrice * 10 - totalBalance).toFixed(2)} $
                                             </StatNumber>}
-                                        {Math.floor(totalBalance / (strongPrice * 10 + 500)) > 0 ? <StatHelpText
+                                        {Math.floor(totalBalance / (strongPrice * 10)) > 0 ? <StatHelpText
                                             alignSelf="flex-end"
                                             justifySelf="flex-end"
                                             m="0px"
@@ -553,7 +553,7 @@ export default function Dashboard() {
                                             ps="3px"
                                             fontSize="sm"
                                         >
-                                            +{Math.floor(totalBalance / (strongPrice * 10 + 500))} Nodes
+                                            +{Math.floor(totalBalance / (strongPrice * 10))} Nodes
                                         </StatHelpText> : null}
                                     </Flex>
                                 </Stat>
