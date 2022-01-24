@@ -32,6 +32,13 @@ import React, {useState} from "react";
 import {BsArrowRight} from "react-icons/bs";
 import {FiDollarSign} from "react-icons/fi";
 import {BiNetworkChart} from "react-icons/bi";
+import {AiOutlineBlock} from "react-icons/all";
+import {BsFillPeopleFill} from "react-icons/all";
+import {AiOutlineLineChart} from "react-icons/all";
+import {GiProfit} from "react-icons/all";
+import {AiFillPieChart} from "react-icons/all";
+import {GrMoney} from "react-icons/all";
+import {GiReceiveMoney} from "react-icons/all";
 // Navbar
 import AdminNavbar from "../../components/Navbars/AdminNavbar.js";
 // Web3
@@ -105,6 +112,8 @@ export default function Dashboard() {
     const [purchaseTokenContract, setPurchaseTokenContract] = useState("");
     const [sharePrice, setSharePrice] = useState(0);
     const [totalBalance, setTotalBalance] = useState(1);
+    const [notClaimedRewards, setNotClaimedReards] = useState(0);
+    const [shareHolderCount, setShareHolderCount] = useState(0);
 
     // User stats
     const [userWallet, setUserWallet] = useState("");
@@ -126,6 +135,7 @@ export default function Dashboard() {
     const [isBuying, setIsBuying] = useState(false);
     const [isConnected, setIsConnected] = useState(false);
     const [buyError, setBuyError] = useState(false);
+    const [shareHolderLoading, setShareHolderLoading] = useState(true);
 
     const {toasts} = useToasterStore();
     const TOAST_LIMIT = 1;
@@ -161,13 +171,40 @@ export default function Dashboard() {
     }
 
 
+    async function getShareHolderCount() {
+        let count = 0;
+        while(true) {
+            try {
+                let holder = await easyBlockContract.holders(count);
+                count += 1;
+            } catch(e) {
+                break;
+            }
+        }
+        if (count > 0) {
+            count -= 1;
+        }
+        setShareHolderCount(count);
+        setShareHolderLoading(false);
+        return count;
+    }
+
+
     async function getNeededAmountData() {
         let balance = 0;
+        let notClaimedReward = 0;
         fetch('https://openapi.debank.com/v1/user/total_balance?id=0x2e21638e961d9436825353d22c3912a29556262d').then(response => response.json()).then(data => {
                 balance += data['total_usd_value'];
                 fetch('https://openapi.debank.com/v1/user/total_balance?id=0xde6f949cec8ba92a8d963e9a0065c03753802d14').then(response => response.json()).then(data => {
                         balance += data['total_usd_value'];
-                        setTotalBalance(balance.toFixed(2));
+                        fetch('https://openapi.debank.com/v1/user/protocol?id=0xde6f949cec8ba92a8d963e9a0065c03753802d14&protocol_id=strongblock').then(response => response.json()).then(data => {
+                                notClaimedReward += data['portfolio_item_list'][0]['stats']['asset_usd_value'];
+                                balance -= notClaimedReward;
+
+                                setNotClaimedReards(notClaimedReward.toFixed(2));
+                                setTotalBalance(balance.toFixed(2));
+                            }
+                        );
                     }
                 );
             }
@@ -275,12 +312,13 @@ export default function Dashboard() {
             console.log(e);
         }
         try {
-            getNeededAmountData();
+            await getNeededAmountData();
         } catch (e) {
             console.log(e);
         }
 
         await getSmartContractData();
+        await getShareHolderCount();
     }, [signer]);
 
     // CONTRACT INTERACTION FUNCTIONS
@@ -449,7 +487,7 @@ export default function Dashboard() {
                         />
                     </Button>
                 </Flex>
-                <SimpleGrid columns={{sm: 1, md: 2, xl: 5}} spacing="12px" paddingLeft={0} paddingRight={0}>
+                <SimpleGrid columns={{sm: 1, md: 2, xl: 5}} spacing="12px" paddingLeft={0} paddingRight={0} marginBottom={4}>
                     <Card minH="83px">
                         <CardBody>
                             <Flex flexDirection="row" align="center" justify="center" w="100%">
@@ -529,6 +567,165 @@ export default function Dashboard() {
                     <Card minH="83px">
                         <CardBody>
                             <Flex flexDirection="row" align="center" justify="center" w="100%">
+                                <Stat>
+                                    <StatLabel
+                                        fontSize="13"
+                                        color="gray.400"
+                                        fontWeight="bold"
+                                        pb=".1rem"
+                                    >
+                                        Total Revenue Distributed
+                                    </StatLabel>
+                                    <Flex>
+                                        {generalDataLoading ?
+                                            <Spinner/> :
+                                            <StatNumber fontSize="lg" color={textColor}>
+                                                {totalRewardsPaid.toFixed(2)} $
+                                            </StatNumber>}
+                                    </Flex>
+                                </Stat>
+                                <Spacer/>
+                                <IconBox as="box" h={"48px"} w={"48px"} bg={"#FFFFFF"}>
+                                    <GiProfit h={"64px"} w={"64px"} color={"#3e68a4"}/>
+                                </IconBox>
+                            </Flex>
+                        </CardBody>
+                    </Card>
+                    <Card minH="83px">
+                        <CardBody>
+                            <Flex flexDirection="row" align="center" justify="center" w="100%">
+                                <Stat me="auto">
+                                    <StatLabel
+                                        fontSize="sm"
+                                        color="gray.400"
+                                        fontWeight="bold"
+                                        pb=".1rem"
+                                    >
+                                        Total Shares
+                                    </StatLabel>
+                                    <Flex>
+                                        {generalDataLoading ?
+                                            <Spinner/> :
+                                            <StatNumber fontSize="lg" color={textColor} fontWeight="bold">
+                                                {totalShareCount}
+                                            </StatNumber>}
+                                    </Flex>
+                                </Stat>
+                                <IconBox as="box" h={"48px"} w={"48px"} bg={"#FFFFFF"}>
+                                    <AiOutlineBlock h={"48px"} w={"48px"} color={"#3e68a4"}/>
+                                </IconBox>
+                            </Flex>
+                        </CardBody>
+                    </Card>
+                    {/*
+                    <Card minH="83px">
+                        <CardBody>
+                            <Flex flexDirection="row" align="center" justify="center" w="100%">
+                                <Stat me="auto">
+                                    <StatLabel
+                                        fontSize="sm"
+                                        color="gray.400"
+                                        fontWeight="bold"
+                                        pb=".1rem"
+                                    >
+                                        Monthly Revenue <br/>/ 100 Shares
+                                    </StatLabel>
+                                    <Flex>
+                                        {generalDataLoading ?
+                                            <Spinner/> :
+                                            <StatNumber fontSize="lg" color={textColor} fontWeight="bold">
+                                                {totalShareCount === 0 ? 0 : (nodesOwned * 3 * strongPrice / totalShareCount * 100).toFixed(2)} $
+                                            </StatNumber>}
+                                    </Flex>
+                                </Stat>
+                                <IconBox as="box" h={"48px"} w={"48px"} bg={"#FFFFFF"}>
+                                    <FiDollarSign h={"48px"} w={"48px"} color={"#3e68a4"}/>
+                                </IconBox>
+                            </Flex>
+                        </CardBody>
+                    </Card>
+                    */}
+                </SimpleGrid>
+                <SimpleGrid columns={{sm: 1, md: 2, xl: 5}} spacing="12px" paddingLeft={0} paddingRight={0}>
+                    <Card minH="83px">
+                        <CardBody>
+                            <Flex flexDirection="row" align="center" justify="center" w="100%">
+                                <Stat me="auto">
+                                    <StatLabel
+                                        fontSize="sm"
+                                        color="gray.400"
+                                        fontWeight="bold"
+                                        pb=".1rem"
+                                    >
+                                        Strong Price
+                                    </StatLabel>
+                                    <Flex>
+                                        <StatNumber fontSize="lg" color={textColor}>
+                                            {strongPrice} $
+                                        </StatNumber>
+                                    </Flex>
+                                </Stat>
+                                <IconBox as="box" h={"48px"} w={"48px"} bg={"#FFFFFF"}>
+                                    <AiOutlineLineChart h={"36px"} w={"36px"} color={"#3e68a4"}/>
+                                </IconBox>
+                            </Flex>
+                        </CardBody>
+                    </Card>
+                    <Card minH="83px">
+                        <CardBody>
+                            <Flex flexDirection="row" align="center" justify="center" w="100%">
+                                <Stat me="auto">
+                                    <StatLabel
+                                        fontSize="sm"
+                                        color="gray.400"
+                                        fontWeight="bold"
+                                        pb=".1rem"
+                                    >
+                                        Not Claimed Revenue
+                                    </StatLabel>
+                                    <Flex>
+                                        {generalDataLoading ?
+                                            <Spinner/> :
+                                            <StatNumber fontSize="lg" color={textColor}>
+                                                {notClaimedRewards} $
+                                            </StatNumber>}
+                                    </Flex>
+                                </Stat>
+                                <IconBox as="box" h={"48px"} w={"48px"} bg={"#FFFFFF"}>
+                                    <GiReceiveMoney h={"36px"} w={"36px"} color={"#3e68a4"}/>
+                                </IconBox>
+                            </Flex>
+                        </CardBody>
+                    </Card>
+                    <Card minH="83px">
+                        <CardBody>
+                            <Flex flexDirection="row" align="center" justify="center" w="100%">
+                                <Stat me="auto">
+                                    <StatLabel
+                                        fontSize="sm"
+                                        color="gray.400"
+                                        fontWeight="bold"
+                                        pb=".1rem"
+                                    >
+                                        Capital Waiting To Be Invested
+                                    </StatLabel>
+                                    <Flex>
+                                        {generalDataLoading ?
+                                            <Spinner/> :
+                                            <StatNumber fontSize="lg" color={textColor}>
+                                                {totalBalance} $
+                                            </StatNumber>}
+                                    </Flex>
+                                </Stat>
+                                <IconBox as="box" h={"48px"} w={"48px"} bg={"#FFFFFF"}>
+                                    <GrMoney h={"36px"} w={"36px"} color={"#3e68a4"}/>
+                                </IconBox>
+                            </Flex>
+                        </CardBody>
+                    </Card>
+                    <Card minH="83px">
+                        <CardBody>
+                            <Flex flexDirection="row" align="center" justify="center" w="100%">
                                 <Stat me="auto">
                                     <StatLabel
                                         fontSize="sm"
@@ -542,23 +739,12 @@ export default function Dashboard() {
                                         {generalDataLoading ?
                                             <Spinner/> :
                                             <StatNumber fontSize="lg" color={textColor} fontWeight="bold">
-                                                {(strongPrice * 10 - totalBalance).toFixed(2)} $
+                                                {(totalBalance / (strongPrice * 10) * 100).toFixed(0)} %
                                             </StatNumber>}
-                                        {Math.floor(totalBalance / (strongPrice * 10)) > 0 ? <StatHelpText
-                                            alignSelf="flex-end"
-                                            justifySelf="flex-end"
-                                            m="0px"
-                                            color="green.400"
-                                            fontWeight="bold"
-                                            ps="3px"
-                                            fontSize="sm"
-                                        >
-                                            +{Math.floor(totalBalance / (strongPrice * 10))} Nodes
-                                        </StatHelpText> : null}
                                     </Flex>
                                 </Stat>
                                 <IconBox as="box" h={"48px"} w={"48px"} bg={"#FFFFFF"}>
-                                    <FiDollarSign h={"48px"} w={"48px"} color={"#3e68a4"}/>
+                                    <AiFillPieChart h={"48px"} w={"48px"} color={"#3e68a4"}/>
                                 </IconBox>
                             </Flex>
                         </CardBody>
@@ -573,19 +759,19 @@ export default function Dashboard() {
                                         fontWeight="bold"
                                         pb=".1rem"
                                     >
-                                        Total Revenue
+                                        Share Holder Count
                                     </StatLabel>
                                     <Flex>
-                                        {generalDataLoading ?
+                                        {shareHolderLoading ?
                                             <Spinner/> :
                                             <StatNumber fontSize="lg" color={textColor}>
-                                                {totalRewardsPaid.toFixed(2)} $
+                                                {shareHolderCount}
                                             </StatNumber>}
                                     </Flex>
                                 </Stat>
                                 <Spacer/>
                                 <IconBox as="box" h={"48px"} w={"48px"} bg={"#FFFFFF"}>
-                                    <FiDollarSign h={"48px"} w={"48px"} color={"#3e68a4"}/>
+                                    <BsFillPeopleFill h={"48px"} w={"48px"} color={"#3e68a4"}/>
                                 </IconBox>
                             </Flex>
                         </CardBody>
@@ -671,12 +857,12 @@ export default function Dashboard() {
                                                         fontWeight="bold"
                                                         pb=".1rem"
                                                     >
-                                                        Expected Monthly Revenue
+                                                        Revenue Not Claimed on Strong (*)
                                                     </StatLabel>
                                                     <Flex>
                                                         <StatNumber fontSize="lg" color={"gray.600"} fontWeight="bold">
                                                             {userDataLoading ? <Spinner/> : <span>
-                                                                {totalShareCount === 0 ? 0 : (nodesOwned * 3 * strongPrice / totalShareCount * userShares).toFixed(4)}</span>} $
+                                                                {totalShareCount === 0 ? 0 : (notClaimedRewards / totalShareCount * userShares).toFixed(4)}</span>} $
                                                         </StatNumber>
                                                     </Flex>
                                                 </Stat>
@@ -687,8 +873,8 @@ export default function Dashboard() {
                                         </CardBody>
                                     </Card>
                                     <Text fontSize="sm" color="gray.400" fontWeight="normal">
-                                        You can buy EasyBlock shares with USDC and start earning rewards from
-                                        StrongBlock nodes.
+                                        (*) This is the reward accumulated from Strongblock but not yet claimed.
+                                        Rewards will be claimed & distributed keeping in mind the gas and cross-chain transfer fees.
                                     </Text>
                                     <Spacer/>
 
