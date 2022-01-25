@@ -74,6 +74,7 @@ let depositTokenContract = null;
 let depositTokenContractWithSigner = null;
 
 export default function Dashboard() {
+    let holdersCount = 0;
     // WEB3 START
     const connectWalletHandler = async () => {
         if (!metamaskInstalled) {
@@ -173,20 +174,21 @@ export default function Dashboard() {
 
     async function getShareHolderCount() {
         let count = 0;
-        while(true) {
+        let checker = 0;
+        for (let i = 0; i < 100; i++) {
             try {
-                let holder = await easyBlockContract.holders(count);
-                count += 1;
-            } catch(e) {
-                break;
+                await easyBlockContract.holders(i);
+                checker = 0;
+                count = i;
+            } catch (e) {
+                if (checker >= 5) {
+                    break;
+                }
+                checker += 1;
             }
-        }
-        if (count > 0) {
-            count -= 1;
         }
         setShareHolderCount(count);
         setShareHolderLoading(false);
-        return count;
     }
 
 
@@ -198,9 +200,12 @@ export default function Dashboard() {
                 fetch('https://openapi.debank.com/v1/user/total_balance?id=0xde6f949cec8ba92a8d963e9a0065c03753802d14').then(response => response.json()).then(data => {
                         balance += data['total_usd_value'];
                         fetch('https://openapi.debank.com/v1/user/protocol?id=0xde6f949cec8ba92a8d963e9a0065c03753802d14&protocol_id=strongblock').then(response => response.json()).then(data => {
-                                notClaimedReward += data['portfolio_item_list'][0]['stats']['asset_usd_value'];
-                                balance -= notClaimedReward;
+                                try {
+                                    notClaimedReward += data['portfolio_item_list'][0]['stats']['asset_usd_value'];
+                                    balance -= notClaimedReward;
+                                } catch (e) {
 
+                                }
                                 setNotClaimedReards(notClaimedReward.toFixed(2));
                                 setTotalBalance(balance.toFixed(2));
                             }
@@ -487,7 +492,8 @@ export default function Dashboard() {
                         />
                     </Button>
                 </Flex>
-                <SimpleGrid columns={{sm: 1, md: 2, xl: 5}} spacing="12px" paddingLeft={0} paddingRight={0} marginBottom={4}>
+                <SimpleGrid columns={{sm: 1, md: 2, xl: 5}} spacing="12px" paddingLeft={0} paddingRight={0}
+                            marginBottom={4}>
                     <Card minH="83px">
                         <CardBody>
                             <Flex flexDirection="row" align="center" justify="center" w="100%">
@@ -874,7 +880,8 @@ export default function Dashboard() {
                                     </Card>
                                     <Text fontSize="sm" color="gray.400" fontWeight="normal">
                                         (*) This is the reward accumulated from Strongblock but not yet claimed.
-                                        Rewards will be claimed & distributed keeping in mind the gas and cross-chain transfer fees.
+                                        Rewards will be claimed & distributed keeping in mind the gas and cross-chain
+                                        transfer fees.
                                     </Text>
                                     <Spacer/>
 
