@@ -175,7 +175,7 @@ export default function Dashboard() {
     async function getShareHolderCount() {
         let count = 0;
         let checker = 0;
-        for (let i = 180; i < 500; i++) {
+        for (let i = 250; i < 500; i++) {
             try {
                 await easyBlockContract.holders(i);
                 checker = 0;
