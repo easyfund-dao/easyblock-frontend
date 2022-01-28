@@ -137,6 +137,7 @@ export default function Dashboard() {
     const [isConnected, setIsConnected] = useState(false);
     const [buyError, setBuyError] = useState(false);
     const [shareHolderLoading, setShareHolderLoading] = useState(true);
+    const [priceLoading, setPriceLoading] = useState(true);
 
     const {toasts} = useToasterStore();
     const TOAST_LIMIT = 1;
@@ -175,7 +176,7 @@ export default function Dashboard() {
     async function getShareHolderCount() {
         let count = 0;
         let checker = 0;
-        for (let i = 250; i < 500; i++) {
+        for (let i = 350; i < 1000; i++) {
             try {
                 await easyBlockContract.holders(i);
                 checker = 0;
@@ -208,6 +209,7 @@ export default function Dashboard() {
                                 }
                                 setNotClaimedReards(notClaimedReward.toFixed(2));
                                 setTotalBalance(balance.toFixed(2));
+                                setPriceLoading(false);
                             }
                         );
                     }
@@ -690,7 +692,7 @@ export default function Dashboard() {
                                         Not Claimed Revenue
                                     </StatLabel>
                                     <Flex>
-                                        {generalDataLoading ?
+                                        {priceLoading ?
                                             <Spinner/> :
                                             <StatNumber fontSize="lg" color={textColor}>
                                                 {notClaimedRewards} $
@@ -716,7 +718,7 @@ export default function Dashboard() {
                                         Capital Waiting To Be Invested
                                     </StatLabel>
                                     <Flex>
-                                        {generalDataLoading ?
+                                        {priceLoading ?
                                             <Spinner/> :
                                             <StatNumber fontSize="lg" color={textColor}>
                                                 {totalBalance} $
@@ -742,7 +744,7 @@ export default function Dashboard() {
                                         Till Next Node
                                     </StatLabel>
                                     <Flex>
-                                        {generalDataLoading ?
+                                        {priceLoading || generalDataLoading ?
                                             <Spinner/> :
                                             <StatNumber fontSize="lg" color={textColor} fontWeight="bold">
                                                 {(totalBalance / (strongPrice * 10) * 100).toFixed(0)} %
