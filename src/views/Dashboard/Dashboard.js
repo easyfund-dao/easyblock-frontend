@@ -73,6 +73,8 @@ let easyBlockWithSigner = null;
 let depositTokenContract = null;
 let depositTokenContractWithSigner = null;
 
+const dollarUSLocale = Intl.NumberFormat('en-US');
+
 export default function Dashboard() {
     let holdersCount = 0;
     // WEB3 START
@@ -115,6 +117,7 @@ export default function Dashboard() {
     const [totalBalance, setTotalBalance] = useState(1);
     const [notClaimedRewards, setNotClaimedReards] = useState(0);
     const [shareHolderCount, setShareHolderCount] = useState(0);
+    const [newInvestments, setNewInvestments] = useState(0);
 
     // User stats
     const [userWallet, setUserWallet] = useState("");
@@ -176,7 +179,7 @@ export default function Dashboard() {
     async function getShareHolderCount() {
         let count = 0;
         let checker = 0;
-        for (let i = 350; i < 1000; i++) {
+        for (let i = 450; i < 1000; i++) {
             try {
                 await easyBlockContract.holders(i);
                 checker = 0;
@@ -196,22 +199,19 @@ export default function Dashboard() {
     async function getNeededAmountData() {
         let balance = 0;
         let notClaimedReward = 0;
-        fetch('https://openapi.debank.com/v1/user/total_balance?id=0x2e21638e961d9436825353d22c3912a29556262d').then(response => response.json()).then(data => {
-                balance += data['total_usd_value'];
-                fetch('https://openapi.debank.com/v1/user/total_balance?id=0xde6f949cec8ba92a8d963e9a0065c03753802d14').then(response => response.json()).then(data => {
-                        balance += data['total_usd_value'];
-                        fetch('https://openapi.debank.com/v1/user/protocol?id=0xde6f949cec8ba92a8d963e9a0065c03753802d14&protocol_id=strongblock').then(response => response.json()).then(data => {
-                                try {
-                                    notClaimedReward += data['portfolio_item_list'][0]['stats']['asset_usd_value'];
-                                    balance -= notClaimedReward;
-                                } catch (e) {
 
-                                }
-                                setNotClaimedReards(notClaimedReward.toFixed(2));
-                                setTotalBalance(balance.toFixed(2));
-                                setPriceLoading(false);
-                            }
-                        );
+        fetch('https://openapi.debank.com/v1/user/total_balance?id=0xde6f949cec8ba92a8d963e9a0065c03753802d14').then(response => response.json()).then(data => {
+                balance += data['total_usd_value'];
+                fetch('https://openapi.debank.com/v1/user/protocol?id=0xde6f949cec8ba92a8d963e9a0065c03753802d14&protocol_id=strongblock').then(response => response.json()).then(data => {
+                        try {
+                            notClaimedReward += data['portfolio_item_list'][0]['stats']['asset_usd_value'];
+                            balance -= notClaimedReward;
+                        } catch (e) {
+
+                        }
+                        setNotClaimedReards(notClaimedReward);
+                        setTotalBalance(balance);
+                        setPriceLoading(false);
                     }
                 );
             }
@@ -273,6 +273,9 @@ export default function Dashboard() {
             let purchaseTokenAddress = await easyBlockContract.purchaseTokens(0);
             let sharePriceInUSD = parseInt(await easyBlockContract.purchaseTokensPrice(purchaseTokenAddress), 10);
             let totalNodesOwned = parseInt(await easyBlockContract.nodeCount(), 10);
+            let investment = parseInt(await easyBlockContract.newInvestments("0x04068da6c83afcfa0e13ba15a6696662335d5b75"), 10);
+            console.log(typeof investment);
+            console.log(investment);
 
             setTotalInvestments(totalInvestment);
             setTotalRewardsPaid(totalRewards);
@@ -280,6 +283,7 @@ export default function Dashboard() {
             setPurchaseTokenContract(purchaseTokenAddress);
             setSharePrice(sharePriceInUSD);
             setNodesOwned(totalNodesOwned);
+            setNewInvestments(investment/1000000); // USDC has 6 decimals
 
             // Deposit token contracts
             depositTokenContract = new ethers.Contract(purchaseTokenAddress, PURCHASE_TOKEN_ABI, provider);
@@ -562,7 +566,7 @@ export default function Dashboard() {
                                         {generalDataLoading ?
                                             <Spinner/> :
                                             <StatNumber fontSize="lg" color={textColor}>
-                                                {totalInvestments.toFixed(2)} $
+                                                {dollarUSLocale.format(totalInvestments.toFixed(2))} $
                                             </StatNumber>}
                                     </Flex>
                                 </Stat>
@@ -588,7 +592,7 @@ export default function Dashboard() {
                                         {generalDataLoading ?
                                             <Spinner/> :
                                             <StatNumber fontSize="lg" color={textColor}>
-                                                {totalRewardsPaid.toFixed(2)} $
+                                                {dollarUSLocale.format(totalRewardsPaid.toFixed(2))} $
                                             </StatNumber>}
                                     </Flex>
                                 </Stat>
@@ -615,7 +619,7 @@ export default function Dashboard() {
                                         {generalDataLoading ?
                                             <Spinner/> :
                                             <StatNumber fontSize="lg" color={textColor} fontWeight="bold">
-                                                {totalShareCount}
+                                                {dollarUSLocale.format(totalShareCount)}
                                             </StatNumber>}
                                     </Flex>
                                 </Stat>
@@ -669,7 +673,7 @@ export default function Dashboard() {
                                     </StatLabel>
                                     <Flex>
                                         <StatNumber fontSize="lg" color={textColor}>
-                                            {strongPrice} $
+                                            {dollarUSLocale.format(strongPrice)} $
                                         </StatNumber>
                                     </Flex>
                                 </Stat>
@@ -695,7 +699,7 @@ export default function Dashboard() {
                                         {priceLoading ?
                                             <Spinner/> :
                                             <StatNumber fontSize="lg" color={textColor}>
-                                                {notClaimedRewards} $
+                                                {dollarUSLocale.format(notClaimedRewards.toFixed(2))} $
                                             </StatNumber>}
                                     </Flex>
                                 </Stat>
@@ -721,7 +725,7 @@ export default function Dashboard() {
                                         {priceLoading ?
                                             <Spinner/> :
                                             <StatNumber fontSize="lg" color={textColor}>
-                                                {totalBalance} $
+                                                {dollarUSLocale.format((totalBalance + newInvestments).toFixed(2))} $
                                             </StatNumber>}
                                     </Flex>
                                 </Stat>
@@ -747,7 +751,7 @@ export default function Dashboard() {
                                         {priceLoading || generalDataLoading ?
                                             <Spinner/> :
                                             <StatNumber fontSize="lg" color={textColor} fontWeight="bold">
-                                                {(totalBalance / (strongPrice * 10) * 100).toFixed(0)} %
+                                                {((totalBalance + newInvestments) / (strongPrice * 10) * 100).toFixed(0)} %
                                             </StatNumber>}
                                     </Flex>
                                 </Stat>
