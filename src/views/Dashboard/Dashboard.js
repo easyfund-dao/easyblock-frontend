@@ -179,7 +179,7 @@ export default function Dashboard() {
     async function getShareHolderCount() {
         let count = 0;
         let checker = 0;
-        for (let i = 450; i < 1000; i++) {
+        for (let i = 500; i < 1000; i++) {
             try {
                 await easyBlockContract.holders(i);
                 checker = 0;
@@ -592,7 +592,7 @@ export default function Dashboard() {
                                         {generalDataLoading ?
                                             <Spinner/> :
                                             <StatNumber fontSize="lg" color={textColor}>
-                                                {dollarUSLocale.format(totalRewardsPaid.toFixed(2))} $
+                                                {dollarUSLocale.format((2266.7521).toFixed(2))} $
                                             </StatNumber>}
                                     </Flex>
                                 </Stat>
@@ -699,7 +699,7 @@ export default function Dashboard() {
                                         {priceLoading ?
                                             <Spinner/> :
                                             <StatNumber fontSize="lg" color={textColor}>
-                                                {dollarUSLocale.format((notClaimedRewards+2300).toFixed(2))} $
+                                                {dollarUSLocale.format((notClaimedRewards).toFixed(2))} $
                                             </StatNumber>}
                                     </Flex>
                                 </Stat>
@@ -725,7 +725,7 @@ export default function Dashboard() {
                                         {priceLoading ?
                                             <Spinner/> :
                                             <StatNumber fontSize="lg" color={textColor}>
-                                                {dollarUSLocale.format((totalBalance + newInvestments - 2300).toFixed(2))} $
+                                                {dollarUSLocale.format((totalBalance + newInvestments).toFixed(2))} $
                                             </StatNumber>}
                                     </Flex>
                                 </Stat>
@@ -751,7 +751,7 @@ export default function Dashboard() {
                                         {priceLoading || generalDataLoading ?
                                             <Spinner/> :
                                             <StatNumber fontSize="lg" color={textColor} fontWeight="bold">
-                                                {((totalBalance + newInvestments - 2300) / (strongPrice * 10) * 100).toFixed(0)} %
+                                                {((totalBalance + newInvestments) / (strongPrice * 10) * 100).toFixed(0)} %
                                             </StatNumber>}
                                     </Flex>
                                 </Stat>
@@ -848,16 +848,6 @@ export default function Dashboard() {
                                         - Shares Owned: {userDataLoading ? <Spinner/> : <span>
                                         {userShares}</span>}
                                     </Text>
-                                    <Text
-                                        fontSize="xl"
-                                        color={textColor}
-                                        fontWeight="bold"
-                                        pb=".5rem"
-                                        marginTop="-16px"
-                                    >
-                                        - All Time Earnings: {userDataLoading ? <Spinner/> :
-                                        <span>{totalUserRewards.toFixed(4)}</span>} $
-                                    </Text>
 
                                     <Card minH="83px" backgroundColor={"#FFFFFF"} marginBottom={"16px"}>
                                         <CardBody>
@@ -874,7 +864,7 @@ export default function Dashboard() {
                                                     <Flex>
                                                         <StatNumber fontSize="lg" color={"gray.600"} fontWeight="bold">
                                                             {userDataLoading ? <Spinner/> : <span>
-                                                                {totalShareCount === 0 ? 0 : ((notClaimedRewards+2300) / totalShareCount * userShares).toFixed(4)}</span>} $
+                                                                {totalShareCount === 0 ? 0 : ((notClaimedRewards) / totalShareCount * userShares).toFixed(4)}</span>} $
                                                         </StatNumber>
                                                     </Flex>
                                                 </Stat>
@@ -910,43 +900,15 @@ export default function Dashboard() {
                                     <Text style={{
                                         marginBottom: 16,
                                         fontWeight: "bold",
-                                        fontSize: 24,
+                                        fontSize: 16,
                                         color: "#3e68a4",
                                         marginTop: 8,
                                         textAlign: 'center',
-                                    }}>Pending Rewards: <br/>
+                                    }}>Reward Distribution Period: 7 days <br/>
                                         {userDataLoading ? <Spinner/> : <span
-                                            style={{fontWeight: 'normal'}}>{userPendingRewards.toFixed(4)} $</span>}
+                                            style={{fontWeight: 'normal', fontSize: 14}}>Your share from the generated revenue will be directly deposited into your wallet every 7 days.</span>}
                                     </Text>
-                                    <Button
-                                        bg={"#3e68a4"}
-                                        p="0px"
-                                        variant="no-hover"
-                                        my={{sm: "1.5rem", lg: "0px"}}
-                                        onClick={() => {
-                                            if (!metamaskInstalled) {
-                                                alert("Please install Metamask to use EasyBlock.");
-                                            } else if (!isConnected) {
-                                                connectWalletHandler();
-                                            } else {
-                                                claimRewards();
-                                            }
-                                        }}
-                                        paddingLeft={8}
-                                        paddingRight={8}
-                                    >
-                                        {!isClaiming ?
-                                            <Text
-                                                fontSize="sm"
-                                                color={textColor}
-                                                fontWeight="bold"
-                                                cursor="pointer"
-                                                transition="all .5s ease"
-                                                my={{sm: "1.5rem", lg: "0px"}}
-                                            >
-                                                Claim Rewards
-                                            </Text> : <Spinner/>}
-                                    </Button>
+
                                 </Flex>
                             </Flex>
                         </CardBody>
