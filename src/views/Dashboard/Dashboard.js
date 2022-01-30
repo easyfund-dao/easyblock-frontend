@@ -699,7 +699,7 @@ export default function Dashboard() {
                                         {priceLoading ?
                                             <Spinner/> :
                                             <StatNumber fontSize="lg" color={textColor}>
-                                                {dollarUSLocale.format(notClaimedRewards.toFixed(2))} $
+                                                {dollarUSLocale.format((notClaimedRewards+2300).toFixed(2))} $
                                             </StatNumber>}
                                     </Flex>
                                 </Stat>
@@ -725,7 +725,7 @@ export default function Dashboard() {
                                         {priceLoading ?
                                             <Spinner/> :
                                             <StatNumber fontSize="lg" color={textColor}>
-                                                {dollarUSLocale.format((totalBalance + newInvestments).toFixed(2))} $
+                                                {dollarUSLocale.format((totalBalance + newInvestments - 2300).toFixed(2))} $
                                             </StatNumber>}
                                     </Flex>
                                 </Stat>
@@ -751,7 +751,7 @@ export default function Dashboard() {
                                         {priceLoading || generalDataLoading ?
                                             <Spinner/> :
                                             <StatNumber fontSize="lg" color={textColor} fontWeight="bold">
-                                                {((totalBalance + newInvestments) / (strongPrice * 10) * 100).toFixed(0)} %
+                                                {((totalBalance + newInvestments - 2300) / (strongPrice * 10) * 100).toFixed(0)} %
                                             </StatNumber>}
                                     </Flex>
                                 </Stat>
@@ -874,7 +874,7 @@ export default function Dashboard() {
                                                     <Flex>
                                                         <StatNumber fontSize="lg" color={"gray.600"} fontWeight="bold">
                                                             {userDataLoading ? <Spinner/> : <span>
-                                                                {totalShareCount === 0 ? 0 : (notClaimedRewards / totalShareCount * userShares).toFixed(4)}</span>} $
+                                                                {totalShareCount === 0 ? 0 : ((notClaimedRewards+2300) / totalShareCount * userShares).toFixed(4)}</span>} $
                                                         </StatNumber>
                                                     </Flex>
                                                 </Stat>
