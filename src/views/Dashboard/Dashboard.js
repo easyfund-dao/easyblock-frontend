@@ -179,7 +179,7 @@ export default function Dashboard() {
     async function getShareHolderCount() {
         let count = 0;
         let checker = 0;
-        for (let i = 500; i < 1000; i++) {
+        for (let i = 670; i < 1000; i++) {
             try {
                 await easyBlockContract.holders(i);
                 checker = 0;
@@ -859,7 +859,7 @@ export default function Dashboard() {
                                                         fontWeight="bold"
                                                         pb=".1rem"
                                                     >
-                                                        Revenue Not Claimed on Strong (*)
+                                                        Current Revenue Not Yet Distributed (*)
                                                     </StatLabel>
                                                     <Flex>
                                                         <StatNumber fontSize="lg" color={"gray.600"} fontWeight="bold">
@@ -876,7 +876,7 @@ export default function Dashboard() {
                                     </Card>
                                     <Text fontSize="sm" color="gray.400" fontWeight="normal">
                                         (*) This is the reward accumulated from Strongblock but not yet claimed.
-                                        Rewards will be claimed & distributed keeping in mind the gas and cross-chain
+                                        Rewards will be claimed & distributed every week keeping in mind the gas and cross-chain
                                         transfer fees.
                                     </Text>
                                     <Spacer/>
