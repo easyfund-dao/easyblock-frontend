@@ -5,6 +5,7 @@ import PropTypes from "prop-types";
 import {FiTwitter} from "react-icons/fi";
 import {BiBookBookmark} from "react-icons/bi";
 import {AiFillGithub} from "react-icons/all";
+import {FaDiscord} from "react-icons/all";
 
 export default function Footer(props) {
     // const linkTeal = useColorModeValue("teal.400", "red.200");=
@@ -51,8 +52,18 @@ export default function Footer(props) {
                             md: "44px",
                         }}
                     >
-                        <Link color="gray.400" href="https://github.com/DoguD/easyblock-contracts" target={'_blank'}>
+                        <Link color="gray.400" href="https://github.com/EasyBlock-Finance" target={'_blank'}>
                             <AiFillGithub size={25}/>
+                        </Link>
+                    </ListItem>
+                    <ListItem
+                        me={{
+                            base: "20px",
+                            md: "44px",
+                        }}
+                    >
+                        <Link color="gray.400" href="https://discord.gg/kcShzPgxT9" target={'_blank'}>
+                            <FaDiscord size={25}/>
                         </Link>
                     </ListItem>
                 </List>
