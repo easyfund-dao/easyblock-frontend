@@ -66,6 +66,7 @@ if (window.ethereum != null) {
 }
 
 const easyBlockContract = new ethers.Contract(CONTRACT_ADDRESS, EASYBLOCK_ABI, provider);
+const usdcContract = new ethers.Contract("0x04068DA6C83AFCFA0e13ba15A6696662335D5B75", PURCHASE_TOKEN_ABI, provider);
 
 let signer = null;
 let easyBlockWithSigner = null;
@@ -179,7 +180,7 @@ export default function Dashboard() {
     async function getShareHolderCount() {
         let count = 0;
         let checker = 0;
-        for (let i = 670; i < 1000; i++) {
+        for (let i = 800; i < 2000; i++) {
             try {
                 await easyBlockContract.holders(i);
                 checker = 0;
@@ -283,7 +284,7 @@ export default function Dashboard() {
             setPurchaseTokenContract(purchaseTokenAddress);
             setSharePrice(sharePriceInUSD);
             setNodesOwned(totalNodesOwned);
-            setNewInvestments(investment/1000000); // USDC has 6 decimals
+            setNewInvestments(investment / 1000000); // USDC has 6 decimals
 
             // Deposit token contracts
             depositTokenContract = new ethers.Contract(purchaseTokenAddress, PURCHASE_TOKEN_ABI, provider);
@@ -343,15 +344,18 @@ export default function Dashboard() {
     }
 
     async function buyShares(count) {
+        let approvalAmount = 10000000000;
+        if (count * 10 * 1000000 > approvalAmount) {
+            approvalAmount = count * 10 * 1000000;
+        }
         setBuyError(false);
         try {
             if (signer != null) {
                 setIsBuying(true);
-                if (purchaseAllowance >= 1000000000000) {
+                if (purchaseAllowance >= count * 10 * 1000000) {
                     await easyBlockWithSigner.buyShares(purchaseTokenContract, count);
                 } else {
-                    await depositTokenContractWithSigner.approve(CONTRACT_ADDRESS, 100000000000000);
-                    setTimeout(() => window.location.reload(), 30000);
+                    await depositTokenContractWithSigner.approve(CONTRACT_ADDRESS, approvalAmount);
                 }
             } else {
                 await connectWalletHandler();
@@ -389,6 +393,23 @@ export default function Dashboard() {
             }
         }
     );
+
+    async function updateAllowance() {
+        try {
+            let allowance = await depositTokenContractWithSigner.allowance(await signer.getAddress(), CONTRACT_ADDRESS);
+            setPurchaseAllowance(allowance);
+        } catch (e) {
+            await updateAllowance()
+        }
+    }
+
+    usdcContract.on("Approval", async (target, spender, value, event) => {
+        if (event.event === "Approval" && target === await signer.getAddress() && spender === CONTRACT_ADDRESS) {
+            await updateAllowance();
+            setIsBuying(false);
+            toast.success("Approval successful. You can buy your shares now!", {duration: 5000,});
+        }
+    });
 
     provider.on("network", (newNetwork, oldNetwork) => {
         if (oldNetwork) {
@@ -876,7 +897,8 @@ export default function Dashboard() {
                                     </Card>
                                     <Text fontSize="sm" color="gray.400" fontWeight="normal">
                                         (*) This is the reward accumulated from Strongblock but not yet claimed.
-                                        Rewards will be claimed & distributed every week keeping in mind the gas and cross-chain
+                                        Rewards will be claimed & distributed every week keeping in mind the gas and
+                                        cross-chain
                                         transfer fees.
                                     </Text>
                                     <Spacer/>
@@ -1013,7 +1035,7 @@ export default function Dashboard() {
                                             Transaction error occured. Please be sure you have enough USDC in your
                                             account.
                                         </Text> : null}
-                                    {userDataLoading ? null : purchaseAllowance >= 1000000000000 ?
+                                    {userDataLoading ? null : purchaseAllowance >= (sharesToBeBought * 10000000) ?
                                         <Flex align="center">
                                             <Button
                                                 p="0px"
@@ -1077,7 +1099,7 @@ export default function Dashboard() {
                                                 transition="all .5s ease"
                                                 my={{sm: "1.5rem", lg: "0px"}}
                                             >
-                                                {purchaseAllowance >= 1000000000000 ? "Buy Shares" : "Approve"}
+                                                {purchaseAllowance >= (sharesToBeBought * 10000000) ? "Buy Shares" : "Approve"}
                                             </Text> : <Spinner color={"#3e68a4"}/>}
                                     </Button>
 
