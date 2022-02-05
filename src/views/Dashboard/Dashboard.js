@@ -81,7 +81,7 @@ export default function Dashboard() {
     // WEB3 START
     const connectWalletHandler = async () => {
         if (!metamaskInstalled) {
-            alert("Please install Metamask to use EasyBlock.");
+            alert("Please install Metamask to use EasyFund.");
             return;
         }
         try {
@@ -91,7 +91,7 @@ export default function Dashboard() {
             chainId = chainId['chainId'];
 
             if (chainId !== 250) {
-                if (window.confirm("Please switch to Fantom Network to use EasyBlock.")) {
+                if (window.confirm("Please switch to Fantom Network to use EasyFund.")) {
                     await changeNetworkToFTM();
                 }
             } else {
@@ -300,7 +300,7 @@ export default function Dashboard() {
             let chainId = await provider.getNetwork();
             chainId = chainId['chainId'];
             if (chainId !== 250) {
-                if (window.confirm("Please switch to Fantom Network to use EasyBlock.")) {
+                if (window.confirm("Please switch to Fantom Network to use EasyFund.")) {
                     await changeNetworkToFTM();
                 }
             } else {
@@ -427,7 +427,7 @@ export default function Dashboard() {
                     setSigner={(newSigner) => {
                         signer = newSigner;
                     }}
-                    logoText={"EasyBlock"}
+                    logoText={"EasyFund"}
                     isConnected={isConnected}
                 />
             </Portal>
@@ -448,20 +448,20 @@ export default function Dashboard() {
                         fontSize: 20,
                         color: "#3e68a4",
                         marginTop: 8
-                    }}>What is EasyBlock? <br/>
+                    }}>What is EasyFund? <br/>
                         <span
                             style={{fontWeight: 'normal', color: "#000000", fontSize: 16}}>
-                            EasyBlock is a protocol running on Fantom Network which enables investors of all sizes to invest in StrongBlock Nodes. StrongBlock requires a minimum investment
-                            amount of <b>{(strongPrice * 10).toFixed(0)} $</b> and runs on Ethereum Mainnet which has really high gas-fees. These conditions make StrongBlock inaccesible for most of investors.
-                            On contrary, <b>EasyBlock</b> has a minimum investment amount of <b>10 $</b> per share and minimal gas fees. <br/>
-                            The amount generated from share sales are bridged to Ethereum Mainnet and used to purchase StrongBlock Nodes. Revenue generated from those nodes is bridged back to Fantom on optimal intervals and distributed to shareholders.
+                            EasyFund is a protocol running on Fantom Network which enables investors of all sizes to invest in different DeFi protocols. Some DeFi protocols like StrongBlock, Thor and other nodes requires a minimum investment
+                            amount of couple of thousends of dolars and runs on Ethereum Mainnet which has really high gas-fees. These conditions make them inaccesible for most of investors.
+                            On contrary, <b>EasyFund</b> has a minimum investment amount of <b>10 $</b> per share and minimal gas fees. <br/>
+                            The amount generated from share sales are bridged to Ethereum Mainnet other networks where revenue generated from these investments is bridged back to Fantom on optimal intervals and distributed to shareholders.
                         </span></Text>
                     <Button
                         p="0px"
                         variant="no-hover"
                         bg="transparent"
                         my={{sm: "1.5rem", lg: "0px"}}
-                        onClick={() => window.open("https://docs.easyblock.finance", '_blank')}
+                        onClick={() => window.open("https://docs.easyfund.dao", '_blank')}
                     >
                         <Text
                             fontSize="sm"
@@ -492,7 +492,7 @@ export default function Dashboard() {
                         variant="no-hover"
                         bg="transparent"
                         my={{sm: "1.5rem", lg: "0px"}}
-                        onClick={() => window.open("https://docs.easyblock.finance/faq", '_blank')}
+                        onClick={() => window.open("https://docs.easyfund.dao/faq", '_blank')}
                     >
                         <Text
                             fontSize="sm"
@@ -521,56 +521,6 @@ export default function Dashboard() {
                 </Flex>
                 <SimpleGrid columns={{sm: 1, md: 2, xl: 5}} spacing="12px" paddingLeft={0} paddingRight={0}
                             marginBottom={4}>
-                    <Card minH="83px">
-                        <CardBody>
-                            <Flex flexDirection="row" align="center" justify="center" w="100%">
-                                <Stat me="auto">
-                                    <StatLabel
-                                        fontSize="sm"
-                                        color="gray.400"
-                                        fontWeight="bold"
-                                        pb=".1rem"
-                                    >
-                                        StrongBlock APR
-                                    </StatLabel>
-                                    <Flex>
-                                        <StatNumber fontSize="lg" color={textColor}>
-                                            ~230%
-                                        </StatNumber>
-                                    </Flex>
-                                </Stat>
-                                <IconBox as="box" h={"48px"} w={"48px"} bg={"#FFFFFF"}>
-                                    <img style={{width: 36, height: 36}} src={'/stronblock/StrongBlockLogo.png'}/>
-                                </IconBox>
-                            </Flex>
-                        </CardBody>
-                    </Card>
-                    <Card minH="83px">
-                        <CardBody>
-                            <Flex flexDirection="row" align="center" justify="center" w="100%">
-                                <Stat me="auto">
-                                    <StatLabel
-                                        fontSize="sm"
-                                        color="gray.400"
-                                        fontWeight="bold"
-                                        pb=".1rem"
-                                    >
-                                        Owned Nodes
-                                    </StatLabel>
-                                    <Flex>
-                                        {generalDataLoading ?
-                                            <Spinner/> :
-                                            <StatNumber fontSize="lg" color={textColor}>
-                                                {nodesOwned}
-                                            </StatNumber>}
-                                    </Flex>
-                                </Stat>
-                                <IconBox as="box" h={"48px"} w={"48px"} bg={"#FFFFFF"}>
-                                    <BiNetworkChart h={"36px"} w={"36px"} color={"#3e68a4"}/>
-                                </IconBox>
-                            </Flex>
-                        </CardBody>
-                    </Card>
                     <Card minH="83px">
                         <CardBody>
                             <Flex flexDirection="row" align="center" justify="center" w="100%">
@@ -690,30 +640,6 @@ export default function Dashboard() {
                                         fontWeight="bold"
                                         pb=".1rem"
                                     >
-                                        Strong Price
-                                    </StatLabel>
-                                    <Flex>
-                                        <StatNumber fontSize="lg" color={textColor}>
-                                            {dollarUSLocale.format(strongPrice)} $
-                                        </StatNumber>
-                                    </Flex>
-                                </Stat>
-                                <IconBox as="box" h={"48px"} w={"48px"} bg={"#FFFFFF"}>
-                                    <AiOutlineLineChart h={"36px"} w={"36px"} color={"#3e68a4"}/>
-                                </IconBox>
-                            </Flex>
-                        </CardBody>
-                    </Card>
-                    <Card minH="83px">
-                        <CardBody>
-                            <Flex flexDirection="row" align="center" justify="center" w="100%">
-                                <Stat me="auto">
-                                    <StatLabel
-                                        fontSize="sm"
-                                        color="gray.400"
-                                        fontWeight="bold"
-                                        pb=".1rem"
-                                    >
                                         Not Claimed Revenue
                                     </StatLabel>
                                     <Flex>
@@ -752,32 +678,6 @@ export default function Dashboard() {
                                 </Stat>
                                 <IconBox as="box" h={"48px"} w={"48px"} bg={"#FFFFFF"}>
                                     <GrMoney h={"36px"} w={"36px"} color={"#3e68a4"}/>
-                                </IconBox>
-                            </Flex>
-                        </CardBody>
-                    </Card>
-                    <Card minH="83px">
-                        <CardBody>
-                            <Flex flexDirection="row" align="center" justify="center" w="100%">
-                                <Stat me="auto">
-                                    <StatLabel
-                                        fontSize="sm"
-                                        color="gray.400"
-                                        fontWeight="bold"
-                                        pb=".1rem"
-                                    >
-                                        Till Next Node
-                                    </StatLabel>
-                                    <Flex>
-                                        {priceLoading || generalDataLoading ?
-                                            <Spinner/> :
-                                            <StatNumber fontSize="lg" color={textColor} fontWeight="bold">
-                                                {((totalBalance + newInvestments) / (strongPrice * 10) * 100).toFixed(0)} %
-                                            </StatNumber>}
-                                    </Flex>
-                                </Stat>
-                                <IconBox as="box" h={"48px"} w={"48px"} bg={"#FFFFFF"}>
-                                    <AiFillPieChart h={"48px"} w={"48px"} color={"#3e68a4"}/>
                                 </IconBox>
                             </Flex>
                         </CardBody>
@@ -896,7 +796,7 @@ export default function Dashboard() {
                                         </CardBody>
                                     </Card>
                                     <Text fontSize="sm" color="gray.400" fontWeight="normal">
-                                        (*) This is the reward accumulated from Strongblock but not yet claimed.
+                                        (*) This is the reward accumulated but not yet claimed.
                                         Rewards will be claimed & distributed every week keeping in mind the gas and
                                         cross-chain
                                         transfer fees.
@@ -962,7 +862,7 @@ export default function Dashboard() {
                                     lineHeight="1.6"
                                 >
                                     <Text fontSize="24" fontWeight="bold" pb=".3rem" marginBottom={4}>
-                                        Buy EasyBlock Shares
+                                        Buy EasyFund Shares
                                     </Text>
                                     <div style={{
                                         display: 'flex',
@@ -1078,7 +978,7 @@ export default function Dashboard() {
                                         my={{sm: "0px", lg: "0px"}}
                                         onClick={() => {
                                             if (!metamaskInstalled) {
-                                                alert("Please install Metamask to use EasyBlock.");
+                                                alert("Please install Metamask to use EasyFund.");
                                             } else if (!isConnected) {
                                                 connectWalletHandler();
                                             } else {

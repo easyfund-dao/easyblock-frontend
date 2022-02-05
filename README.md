@@ -1,8 +1,8 @@
-# EasyBlock
-Makes [StrongBlock](https://strongblock.com/) accesible for everybody.
+# EasyFund
+Makes DeFi accesible for everybody.
 
 ## Contracts
-https://github.com/DoguD/easyblock-contracts
+https://github.com/easyfund-dao/easyblock-contracts
 
 ### Thanks To
-- [Purity UI Dashboard](https://demos.creative-tim.com/purity-ui-dashboard)
+- [Easyblock](https://github.com/EasyBlock-Finance)
