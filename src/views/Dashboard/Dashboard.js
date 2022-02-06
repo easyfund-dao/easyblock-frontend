@@ -198,9 +198,9 @@ export default function Dashboard() {
         let balance = 0;
         let notClaimedReward = 0;
 
-        fetch('https://openapi.debank.com/v1/user/total_balance?id=0xde6f949cec8ba92a8d963e9a0065c03753802d14').then(response => response.json()).then(data => {
+        fetch('https://openapi.debank.com/v1/user/total_balance?id=0xfdE4A69f24182EF6b8b88c9A5bB4d87097191048').then(response => response.json()).then(data => {
                 balance += data['total_usd_value'];
-                fetch('https://openapi.debank.com/v1/user/protocol?id=0xde6f949cec8ba92a8d963e9a0065c03753802d14&protocol_id=strongblock').then(response => response.json()).then(data => {
+                fetch('https://openapi.debank.com/v1/user/protocol?id=0xfdE4A69f24182EF6b8b88c9A5bB4d87097191048&protocol_id=strongblock').then(response => response.json()).then(data => {
                         try {
                             notClaimedReward += data['portfolio_item_list'][0]['stats']['asset_usd_value'];
                             balance -= notClaimedReward;
