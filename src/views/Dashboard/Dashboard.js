@@ -200,10 +200,10 @@ export default function Dashboard() {
 
         fetch('https://openapi.debank.com/v1/user/token?id=0xfdE4A69f24182EF6b8b88c9A5bB4d87097191048&chain_id=ftm&token_id=0x04068DA6C83AFCFA0e13ba15A6696662335D5B75').then(response => response.json()).then(data => {
                 balance += data['amount'];
-                fetch('https://openapi.debank.com/v1/user/total_balance?id=0xfdE4A69f24182EF6b8b88c9A5bB4d87097191048').then(response => response.json()).then(data => {
+                fetch('https://openapi.debank.com/v1/user/token?id=0xfdE4A69f24182EF6b8b88c9A5bB4d87097191048&chain_id=ftm&token_id=ftm').then(response => response.json()).then(data => {
                         try {
                             notClaimedReward += data['total_usd_value'];
-                            balance -= notClaimedReward;
+                            // balance -= notClaimedReward;
                         } catch (e) {
 
                         }
