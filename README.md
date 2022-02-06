@@ -1,5 +1,5 @@
 # EasyFund
-Makes DeFi accesible for everybody.
+Makes DeFi accessible for everybody.
 
 ## Contracts
 https://github.com/easyfund-dao/easyblock-contracts
