@@ -32,9 +32,9 @@ export default function Footer(props) {
                             md: "44px",
                         }}
                     >
-                        <Link color="gray.400" href="https://twitter.com/easyblock_fin" target={'_blank'}>
+                        {/* <Link color="gray.400" href="https://twitter.com/easyblock_fin" target={'_blank'}>
                             <FiTwitter size={25}/>
-                        </Link>
+                        </Link> */}
                     </ListItem>
                     <ListItem
                         me={{
@@ -42,7 +42,7 @@ export default function Footer(props) {
                             md: "44px",
                         }}
                     >
-                        <Link color="gray.400" href="https://docs.easyblock.finance" target={'_blank'}>
+                        <Link color="gray.400" href="https://easyfund-fi.gitbook.io/easyfund/" target={'_blank'}>
                             <BiBookBookmark size={25}/>
                         </Link>
                     </ListItem>
@@ -52,7 +52,7 @@ export default function Footer(props) {
                             md: "44px",
                         }}
                     >
-                        <Link color="gray.400" href="https://github.com/EasyBlock-Finance" target={'_blank'}>
+                        <Link color="gray.400" href="https://github.com/easyfund-dao" target={'_blank'}>
                             <AiFillGithub size={25}/>
                         </Link>
                     </ListItem>
@@ -62,14 +62,14 @@ export default function Footer(props) {
                             md: "44px",
                         }}
                     >
-                        <Link color="gray.400" href="https://discord.gg/kcShzPgxT9" target={'_blank'}>
+                        <Link color="gray.400" href="https://discord.gg/9TRemMaT" target={'_blank'}>
                             <FaDiscord size={25}/>
                         </Link>
                     </ListItem>
                 </List>
             </Flex>
             <p style={{textAlign: 'center', fontSize: 12, color: "#ff7f7", marginTop: 32}}>
-                Use of easyblock.finance (the “Site”) and the Easyblock protocol (the “Protocol”) is strictly at your
+                Use of easyfund.finance (the “Site”) and the EasyFund protocol (the “Protocol”) is strictly at your
                 own risk.
                 Before using the Protocol, users should fully understand and accept the risks involved, which
                 include,
@@ -77,13 +77,12 @@ export default function Footer(props) {
                 loss of
                 funds. Do not deploy funds you cannot afford to lose. The Protocol is unaudited yet and involves a
                 substantial degree of risk. No representations or warranties are made as to the safety of funds
-                deployed, and easyblock.finance will not be liable or responsible for any losses incurred. By using the
+                deployed, and easyfund.finance will not be liable or responsible for any losses incurred. By using the
                 Site or
                 the
                 Protocol, you represent and warrant that your use does not violate any law, rule or regulation in
                 your
-                jurisdiction of residence. We are not affiliated with Strongblock and not liable for any losses which
-                could be incurred by them.
+                jurisdiction of residence.
             </p>
         </div>
     );

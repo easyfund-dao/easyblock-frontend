@@ -46,10 +46,7 @@ import {ethers} from 'ethers';
 import {CONTRACT_ADDRESS, EASYBLOCK_ABI, PURCHASE_TOKEN_ABI} from "../../contracts/EasyBlock";
 // Toast
 import toast, {Toaster, useToasterStore} from 'react-hot-toast';
-// Analytics
-import {initializeFirebase} from "../../util/firebase";
 
-initializeFirebase();
 
 
 console.log(window.ethereum);
@@ -461,7 +458,7 @@ export default function Dashboard() {
                         variant="no-hover"
                         bg="transparent"
                         my={{sm: "1.5rem", lg: "0px"}}
-                        onClick={() => window.open("https://docs.easyfund.dao", '_blank')}
+                        onClick={() => window.open("https://easyfund-fi.gitbook.io/easyfund", '_blank')}
                     >
                         <Text
                             fontSize="sm"
@@ -492,7 +489,7 @@ export default function Dashboard() {
                         variant="no-hover"
                         bg="transparent"
                         my={{sm: "1.5rem", lg: "0px"}}
-                        onClick={() => window.open("https://docs.easyfund.dao/faq", '_blank')}
+                        onClick={() => window.open("https://easyfund-fi.gitbook.io/easyfund/faq", '_blank')}
                     >
                         <Text
                             fontSize="sm"
